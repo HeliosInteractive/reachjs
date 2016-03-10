@@ -37,6 +37,16 @@ module.exports = function( grunt ) {
         }
       }
     },
+    mochaTest: {
+      test: {
+        options: {
+          reporter: 'spec',
+          quiet: false,
+          clearRequireCache: false
+        },
+        src: ['test/**/*.js']
+      }
+    },
     watch: {
       files: [ "<%= jshint.all.src %>" ],
       tasks: [ "jshint:all", "uglify:reach" ]
@@ -51,5 +61,4 @@ module.exports = function( grunt ) {
   grunt.registerTask( "lint", [ "jshint:all" ] );
 
   grunt.registerTask( "default", [ "build" ] );
-
 };
