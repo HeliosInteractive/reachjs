@@ -13,7 +13,7 @@ module.exports = function( grunt ) {
       },
       reach: {
         files: {
-          'dist/reach.js': ['./lib/request.js', 'index.js']
+          'dist/reach.js': ['./lib/merge.js','./lib/request.js', 'index.js']
         }
       },
       reachmin: {
