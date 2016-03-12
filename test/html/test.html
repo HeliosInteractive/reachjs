@@ -13,6 +13,18 @@
 </script>
 <script src="../../dist/reach.js"></script>
 <script src="../../test/get.js"></script>
+
+<canvas id="myCanvas" width="300" height="150"></canvas>
+<script>
+    var canvas = document.getElementById('myCanvas');
+    var ctx = canvas.getContext('2d');
+    ctx.font = '24px Arial';
+    ctx.textAlign = 'center';
+    ctx.textBaseline = 'middle';
+    ctx.fillStyle = 'black';  // a color name or by using rgb/rgba/hex values
+    ctx.fillText('REACH!', 140, 70); // text and position
+</script>
+
 <script src="../../test/post.js"></script>
 <script>
     mocha.run();

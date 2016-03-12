@@ -8,12 +8,16 @@ module.exports = function( grunt ) {
       options: {
         mangle: false,
         beautify: true,
+        "indent-level" : 2,
+        width : 120,
+        semicolons: false,
+        quote_style: 1,
         wrap: true,
         banner: "/*Reach Client v"+pkg.version+"*/\n"
       },
       reach: {
         files: {
-          'dist/reach.js': ['./lib/merge.js','./lib/request.js', 'index.js']
+          'dist/reach.js': ['./lib/merge.js','./lib/image.js','./lib/request.js', 'index.js']
         }
       },
       reachmin: {

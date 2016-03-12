@@ -12,7 +12,7 @@ reach.key = "helios_test";
 describe('Reach POST', function() {
 
 
-  it("Should create a guest", function(done){
+  it.skip("Should create a guest", function(done){
 
     this.timeout(5000);
 
@@ -23,6 +23,27 @@ describe('Reach POST', function() {
     });
 
   });
+
+
+  it("Should upload a photo", function(done){
+
+    this.timeout(5000);
+
+
+    var canvas = document.getElementById('myCanvas');
+    reach.image.fromCanvas(canvas, function(err, data){
+      console.log("data", data);
+
+      reach.upload("test/reachjs/", data, function(){
+        done();
+      });
+    });
+
+
+
+  });
+
+
 
 
 });

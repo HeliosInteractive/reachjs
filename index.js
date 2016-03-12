@@ -1,9 +1,10 @@
 "use strict";
 
-var DEVURL = "http://reachstaging.herokuapp.com/api/";
+//var DEVURL = "http://reachstaging.herokuapp.com/api/";
+var DEVURL = "http://local.reach.com/api/";
 var PRODURL = "http://reachstadiums.herokuapp.com/api/";
 
-var request;
+var request, image;
 var _devel = false;
 var _url = PRODURL;
 /**
@@ -37,14 +38,7 @@ var reach = function(uri, options, callback) {
   if( options.uri.substr(0, 1) === "/" )
     options.uri = options.uri.substr(1);
 
-  if( options.method === "POST" || options.method === "PUT" ) {
-    var data = exports.merge(true,options);
-    delete data.headers;
-    delete data.uri;
-    delete data.data;
-    delete data.method;
-    options.data = data;
-  }
+  options = formatData(options);
 
   uri = _url + options.uri;
   delete options.uri;
@@ -54,10 +48,34 @@ var reach = function(uri, options, callback) {
 
   !options.headers && (options.headers = {});
   options.headers["X-Helios-ID"] = reach.key;
-  options.headers["Content-Type"] = "application/json";
+
+  if( !options.headers["Content-Type"] )
+    options.headers["Content-Type"] = "application/json";
 
   return new request(uri, options, callback);
 };
+/**
+ * Format request options data
+ * @param options
+ * @returns {*}
+ */
+function formatData(options){
+
+  if( options.method !== "POST" && options.method !== "PUT" )
+    return options;
+
+  if( options.headers && options.headers["Content-Type"] === "multipart/form-data")
+    return options;
+
+  var data = exports.merge(true,options);
+  delete data.headers;
+  delete data.uri;
+  delete data.data;
+  delete data.method;
+  options.data = data;
+
+  return options;
+}
 /**
  * Turn options arguments into loopback filter string
  * @param filter
@@ -99,17 +117,16 @@ function verbFunc (method) {
     return reach(uri, options, callback);
   };
 }
-
 if( typeof module !== "undefined" && module.exports )
   module.exports = reach; // node
 else
   global.reach = exports.reach = reach;
 
 request = ( exports && exports.request ) ? exports.request : require("./lib/request");
+image = ( exports && exports.image ) ? exports.image : require("./lib/image");
 if( !exports || !exports.merge )
   exports.merge = require("./lib/merge");
 
-reach.request = request;
 /**
  * Get environment or
  * Set reach into development or production mode
@@ -126,7 +143,30 @@ reach.get = verbFunc("GET");
 reach.post = verbFunc("POST");
 reach.put = verbFunc("PUT");
 reach.del = verbFunc("DELETE");
+reach.request = request;
+reach.image = image;
+reach.upload = upload;
 
-reach.upload = function(path, data){
 
+function upload(path, data, callback){
+
+  if( data[0] )
+    data = data.map(function(obj){
+      obj.path = path + obj.name;
+      return obj;
+    });
+  else
+    data.path = path + data.name;
+
+  // image - canvas, <img/>, <input/>
+  if( path.substr(0, 1) === "/" )
+    path = path.substr(1);
+
+  reach("containers/reachdata/upload", {
+    method : "POST",
+    headers : {
+      "Content-Type" : "multipart/form-data"
+    },
+    data : data
+  }, callback);
 }
