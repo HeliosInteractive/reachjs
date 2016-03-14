@@ -21,27 +21,6 @@
     function typeOf(input) {
         return {}.toString.call(input).slice(8, -1).toLowerCase();
     }
-    function base64ToBinary(base64) {
-        var b, data = base64.replace(/data:image\/png;base64,/, "");
-        try {
-            b = b64toBlob(data, "image/png");
-        } catch (e) {
-            b = new Buffer(data);
-        }
-        return b;
-    }
-    function b64toBlob(b64Data, contentType, sliceSize) {
-        contentType = contentType || "", sliceSize = sliceSize || 512;
-        for (var byteCharacters = atob(b64Data), byteArrays = [], offset = 0; offset < byteCharacters.length; offset += sliceSize) {
-            for (var slice = byteCharacters.slice(offset, offset + sliceSize), byteNumbers = new Array(slice.length), i = 0; i < slice.length; i++) byteNumbers[i] = slice.charCodeAt(i);
-            var byteArray = new Uint8Array(byteNumbers);
-            byteArrays.push(byteArray);
-        }
-        var blob = new Blob(byteArrays, {
-            type: contentType
-        });
-        return blob;
-    }
     function uuid() {
         var d = new Date().getTime();
         return window && window.performance && "function" == typeof window.performance.now && (d += performance.now()), 
@@ -66,15 +45,6 @@
         if (!headers) return headers;
         var h = {};
         return headers.split("\r\n").forEach(foreachHeader), h;
-    }
-    function formData(files) {
-        var sBoundary = "---------------------------" + Date.now().toString(16), segments = [];
-        if (files[0]) for (var i = 0; i < files.length; i++) segments[i] = 'Content-Disposition: form-data; name="file"; filename="' + files[i].path + '"\r\nContent-Type: ' + files[i].type + "\r\n\r\n", 
-        segments[i] += files[i].data + "\r\n"; else segments = [ 'Content-Disposition: form-data; name="file"; filename="' + files.path + '"\r\nContent-Type: ' + files.type + "\r\n\r\n" + files.data + "\r\n" ];
-        return {
-            boundary: sBoundary,
-            body: "--" + sBoundary + "\r\n" + segments.join("--" + sBoundary + "\r\n") + "--" + sBoundary + "--\r\n"
-        };
     }
     function formatData(options) {
         if ("POST" !== options.method && "PUT" !== options.method) return options;
@@ -143,28 +113,32 @@
                 type: type || "image/png"
             }));
         }
-    }), image.fromCanvas = function(image, callback) {
-        image.toBlob(function() {
-            var filename = uuid() + ".png";
+    }), image.fromCanvas = function(canvas, type, callback) {
+        "function" == typeof type && (callback = type, type = "image/png");
+        var filename = uuid() + canvas.supportedMimeTypes[type];
+        canvas.toBlob(function(blob) {
             callback(null, {
                 name: filename,
-                type: "image/png",
-                data: image.toDataURL().replace(/data:image\/png;base64,/, "")
+                type: type,
+                data: blob
             });
-        });
-    }, image.fromImage = function(image) {
+        }, type);
+    }, image.fromImage = function(img, type, callback) {
+        "function" == typeof type && (callback = type, type = "image/png");
         var canvas = document.createElement("canvas");
-        canvas.width = image.width, canvas.height = image.height;
+        canvas.width = img.width, canvas.height = img.height;
         var ctx = canvas.getContext("2d");
-        ctx.drawImage(image, 0, 0);
-        var filename = uuid() + ".png";
-        return {
-            name: filename,
-            type: "image/png",
-            data: base64ToBinary(canvas.toDataURL("image/png"))
-        };
+        ctx.drawImage(img, 0, 0);
+        var filename = uuid() + image.supportedMimeTypes[type];
+        ctx.toBlob(function(blob) {
+            callback(null, {
+                name: filename,
+                type: type,
+                data: blob
+            });
+        }, type);
     }, image.fromFileInput = function(file, callback) {
-        if ("undefined" == typeof FileReader) throw new Error("reach.image.fromFileInput not supported in node. If you are using node webkit make sure you are running in window context. Or, pass your own Buffer or array data to reach.upload");
+        if ("undefined" == typeof FileReader) throw new Error("reach.image.fromFileInput not supported in node. If you are using node webkit make sure you are running in window context. Use fromLocalPath or create your own data object.");
         var reader = new FileReader();
         return reader.onload = function(event) {
             var filename = uuid() + ".png";
@@ -207,10 +181,8 @@
         self.oReq = new XMLHttpRequest(), uri += querystring(opts.qs), self.oReq.addEventListener("load", xhrResponse), 
         self.oReq.open(opts.method && opts.method.toUpperCase() || "GET", uri, !0);
         var data = null;
-        if (opts.data) if (opts.headers && "multipart/form-data" === opts.headers["Content-Type"]) {
-            var multipart = formData(opts.data);
-            opts.headers["Content-Type"] += ", boundary=" + multipart.boundary, data = multipart.body;
-        } else data = JSON.stringify(opts.data);
+        opts.data && (opts.headers && "multipart/form-data" === opts.headers["Content-Type"] ? (data = new FormData(), 
+        data.append("file", opts.data.data, opts.data.path), delete opts.headers["Content-Type"]) : data = JSON.stringify(opts.data)), 
         opts.headers && "object" == typeof opts.headers && Object.keys(opts.headers).forEach(self.setHeaders.bind(self, opts.headers)), 
         self.oReq.send(data);
     };

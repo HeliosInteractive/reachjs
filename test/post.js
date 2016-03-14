@@ -32,6 +32,7 @@ describe('Reach POST', function() {
 
     var canvas = document.getElementById('myCanvas');
     reach.image.fromCanvas(canvas, function(err, data){
+
       console.log("data", data);
 
       reach.upload("test/reachjs/", data, function(){
