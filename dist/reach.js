@@ -23,11 +23,31 @@
     }
     function uuid() {
         var d = new Date().getTime();
-        return window && window.performance && "function" == typeof window.performance.now && (d += performance.now()), 
-        "xxxxxxxx-xxxx-4xxx-yxxx-xxxxxxxxxxxx".replace(/[xy]/g, function(c) {
+        return perf && (d += perf.now()), "xxxxxxxx-xxxx-4xxx-yxxx-xxxxxxxxxxxx".replace(/[xy]/g, function(c) {
             var r = (d + 16 * Math.random()) % 16 | 0;
             return d = Math.floor(d / 16), ("x" === c ? r : 3 & r | 8).toString(16);
         });
+    }
+    function toBlobOrBuffer(canvas, type, callback) {
+        var filename = uuid() + image.supportedMimeTypes[type];
+        try {
+            canvas.toBlob(function(blob) {
+                callback(null, {
+                    name: filename,
+                    type: type,
+                    data: blob
+                });
+            }, type);
+        } catch (e) {
+            setTimeout(function() {
+                var regex = new RegExp("data:" + type + ";base64,"), buffer = new Buffer(canvas.toDataURL(type).replace(regex, ""), "base64");
+                callback(null, {
+                    name: filename,
+                    type: type,
+                    data: buffer
+                });
+            }, 1);
+        }
     }
     function querystring(obj) {
         function toParam(a, k) {
@@ -45,6 +65,14 @@
         if (!headers) return headers;
         var h = {};
         return headers.split("\r\n").forEach(foreachHeader), h;
+    }
+    function getForm(data) {
+        var FormData = require("form-data"), form = new FormData();
+        return form.append("file", data.data, {
+            filename: data.path,
+            contentType: data.type,
+            basename: !1
+        }), form;
     }
     function formatData(options) {
         if ("POST" !== options.method && "PUT" !== options.method) return options;
@@ -94,8 +122,11 @@
         }
         return output;
     }, "undefined" != typeof module && module.exports ? module.exports = Public : exports.merge = Public;
-    var image = {};
-    "undefined" != typeof module && module.exports ? exports.image = module.exports = image : exports.image = image, 
+    var image = {}, perf = !1;
+    "undefined" != typeof module && module.exports ? exports.image = module.exports = image : exports.image = image;
+    try {
+        window && window.performance && "function" == typeof window.performance.now && (perf = window.performance);
+    } catch (e) {}
     image.supportedMimeTypes = {
         ".png": "image/png",
         ".jpg": "image/jpg",
@@ -106,64 +137,50 @@
         "image/jpg": ".jpg",
         "image/gif": ".gif",
         "video/mp4": ".mp4"
-    }, HTMLCanvasElement.prototype.toBlob || Object.defineProperty(HTMLCanvasElement.prototype, "toBlob", {
-        value: function(callback, type, quality) {
-            for (var binStr = atob(this.toDataURL(type, quality).split(",")[1]), len = binStr.length, arr = new Uint8Array(len), i = 0; len > i; i++) arr[i] = binStr.charCodeAt(i);
-            callback(new Blob([ arr ], {
-                type: type || "image/png"
-            }));
-        }
-    }), image.fromCanvas = function(canvas, type, callback) {
-        "function" == typeof type && (callback = type, type = "image/png");
-        var filename = uuid() + canvas.supportedMimeTypes[type];
-        canvas.toBlob(function(blob) {
-            callback(null, {
-                name: filename,
-                type: type,
-                data: blob
-            });
-        }, type);
+    };
+    try {
+        HTMLCanvasElement.prototype.toBlob || Object.defineProperty(HTMLCanvasElement.prototype, "toBlob", {
+            value: function(callback, type, quality) {
+                for (var binStr = atob(this.toDataURL(type, quality).split(",")[1]), len = binStr.length, arr = new Uint8Array(len), i = 0; len > i; i++) arr[i] = binStr.charCodeAt(i);
+                callback(new Blob([ arr ], {
+                    type: type || "image/png"
+                }));
+            }
+        });
+    } catch (e) {}
+    image.fromCanvas = function(canvas, type, callback) {
+        "function" == typeof type && (callback = type, type = "image/png"), toBlobOrBuffer(canvas, type, callback);
     }, image.fromImage = function(img, type, callback) {
         "function" == typeof type && (callback = type, type = "image/png");
         var canvas = document.createElement("canvas");
         canvas.width = img.width, canvas.height = img.height;
         var ctx = canvas.getContext("2d");
-        ctx.drawImage(img, 0, 0);
-        var filename = uuid() + image.supportedMimeTypes[type];
-        ctx.toBlob(function(blob) {
-            callback(null, {
-                name: filename,
-                type: type,
-                data: blob
-            });
-        }, type);
+        ctx.drawImage(img, 0, 0), toBlobOrBuffer(ctx, type, callback);
     }, image.fromFileInput = function(file, callback) {
-        if ("undefined" == typeof FileReader) throw new Error("reach.image.fromFileInput not supported in node. If you are using node webkit make sure you are running in window context. Use fromLocalPath or create your own data object.");
-        var reader = new FileReader();
-        return reader.onload = function(event) {
-            var filename = uuid() + ".png";
-            callback(null, {
-                name: filename,
-                type: "image/png",
-                data: event.target.result
-            });
-        }, reader.onerror = reader.onabort = callback, reader.readAsArrayBuffer(file), file;
+        return image.fromBuffer(file, file.name, callback), file;
     }, image.fromLocalPath = function(path, callback) {
         try {
             require("fs").readFile(path, function(err, data) {
-                var extension = "." + path.split(".").pop(), filename = uuid() + extension;
-                callback(err, data && {
-                    name: filename,
-                    type: image.supportedMimeTypes[extension],
-                    data: data
-                });
+                image.fromBuffer(data, path, callback);
             });
         } catch (e) {
             throw new Error("reach.image.fromLocalPath only supported in node.");
         }
         return path;
+    }, image.fromBuffer = function(buffer, path, callback) {
+        setTimeout(function() {
+            var extension = "." + path.split(".").pop();
+            callback(null, buffer && {
+                name: uuid() + extension,
+                type: image.supportedMimeTypes[extension],
+                data: buffer
+            });
+        }, 1);
     };
     var xhr = function(uri, opts, callback) {
+        function xhrError(err) {
+            callback(err);
+        }
         function xhrResponse(res) {
             var response = {
                 body: res.target.response,
@@ -179,7 +196,7 @@
         }
         var self = this;
         self.oReq = new XMLHttpRequest(), uri += querystring(opts.qs), self.oReq.addEventListener("load", xhrResponse), 
-        self.oReq.open(opts.method && opts.method.toUpperCase() || "GET", uri, !0);
+        self.oReq.addEventListener("error", xhrError), self.oReq.open(opts.method && opts.method.toUpperCase() || "GET", uri, !0);
         var data = null;
         opts.data && (opts.headers && "multipart/form-data" === opts.headers["Content-Type"] ? (data = new FormData(), 
         data.append("file", opts.data.data, opts.data.path), delete opts.headers["Content-Type"]) : data = JSON.stringify(opts.data)), 
@@ -215,16 +232,20 @@
         var http = require("http"), url = require("url");
         uri += querystring(opts.qs);
         var parsed = url.parse(uri, !0, !0), reqOptions = {
-            host: parsed.host,
+            host: parsed.hostname,
             protocol: parsed.protocol,
+            port: parsed.port,
             path: parsed.path,
             headers: opts.headers,
             method: opts.method
-        }, req = http.request(reqOptions, httpResponse).on("error", httpError);
-        opts.data && req.write(JSON.stringify(opts.data)), req.end();
+        }, form = !1;
+        opts.headers && "multipart/form-data" === opts.headers["Content-Type"] && (form = getForm(opts.data), 
+        reqOptions.headers["Content-Type"] = form.getHeaders()["content-type"]);
+        var req = http.request(reqOptions, httpResponse).on("error", httpError);
+        form ? form.pipe(req) : opts.data && req.write(JSON.stringify(opts.data)), req.end();
     };
     "undefined" != typeof module && module.exports ? exports.request = module.exports = http : exports.request = xhr;
-    var request, image, DEVURL = "http://local.reach.com/api/", PRODURL = "http://reachstadiums.herokuapp.com/api/", _devel = !1, _url = PRODURL, reach = function(uri, options, callback) {
+    var request, image, DEVURL = "http://192.168.248.2:3005/api/", PRODURL = "http://reachstadiums.herokuapp.com/api/", _devel = !1, _url = PRODURL, reach = function(uri, options, callback) {
         if ("undefined" == typeof uri) throw new Error("undefined is not a valid uri or options object.");
         if (!reach.key) throw new Error("reach.key is required");
         "function" == typeof options && (callback = options), "object" == typeof options ? options.uri = uri : options = "string" == typeof uri ? {
