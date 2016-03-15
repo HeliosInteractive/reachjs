@@ -128,6 +128,20 @@ reach.image.fromFileInput(file, function (err, data) {
 });
 ```
 
+Manually adding a photo - none of the above methods work for your situation
+
+```
+var data =  {
+  name: "myimage.gif",
+  type: "image/gif",
+  data: [new Blob([""], {type : "image/gif"})] // any binary array, Buffer, Blob
+}
+reach.upload("test/reachjs/", data, function (err, res) {
+  console.log(err, res.body.result.files);
+});
+
+```
+
 Attach a file to an experience
 
 ```
