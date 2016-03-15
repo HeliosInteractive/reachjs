@@ -1,7 +1,6 @@
 "use strict";
 
-//var DEVURL = "http://reachstaging.herokuapp.com/api/";
-var DEVURL = "http://192.168.248.2:3005/api/";
+var DEVURL = "http://reachstaging.herokuapp.com/api/";
 var PRODURL = "http://reachstadiums.herokuapp.com/api/";
 
 var request, image;

@@ -244,7 +244,7 @@
         form ? form.pipe(req) : opts.data && req.write(JSON.stringify(opts.data)), req.end();
     };
     "undefined" != typeof module && module.exports ? exports.request = module.exports = http : exports.request = xhr;
-    var request, image, DEVURL = "http://192.168.248.2:3005/api/", PRODURL = "http://reachstadiums.herokuapp.com/api/", _devel = !1, _url = PRODURL, reach = function(uri, options, callback) {
+    var request, image, DEVURL = "http://reachstaging.herokuapp.com/api/", PRODURL = "http://reachstadiums.herokuapp.com/api/", _devel = !1, _url = PRODURL, reach = function(uri, options, callback) {
         if ("undefined" == typeof uri) throw new Error("undefined is not a valid uri or options object.");
         if (!reach.key) throw new Error("reach.key is required");
         "function" == typeof options && (callback = options), "object" == typeof options ? options.uri = uri : options = "string" == typeof uri ? {
