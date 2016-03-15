@@ -78,6 +78,80 @@ reach.post("experiences", {"type":"reach_test", "activationId":"123", "eventId":
 });
 ```
 
+Upload a photo - 4 ways to handle this with the client
+
+```
+// from a canvas element (or Canvas object) https://developer.mozilla.org/en-US/docs/Web/API/Canvas_API
+var canvas = document.getElementById("canvas-element-id");
+reach.image.fromCanvas(canvas, function(err, data){
+
+  reach.upload("test/reachjs/", data, function(err, res){
+    console.log(err, res.body.result.files);
+  });
+});
+
+// from an img tag (or Image object) https://developer.mozilla.org/en-US/docs/Web/API/HTMLImageElement/Image
+var image = document.getElementById("myImage");
+reach.image.fromImage(image, function(err, data){
+
+  reach.upload("test/reachjs/", data, function(err, res){
+    console.log(err, res.body.result.files);
+  });
+});
+
+// from a local file (Node only)
+reach.image.fromLocalPath(require("path").join(__dirname, "reach.png"), function(err, data){
+
+  reach.upload("test/reachjs/", data, function(err, res){
+    console.log(err, res.body.result.files);
+  });
+});
+
+
+// From a File object https://developer.mozilla.org/en-US/docs/Web/API/File
+var file = new File([new Blob([""], {type : "image/png"})], "cat.png");
+reach.image.fromFileInput(file, function (err, data) {
+
+  reach.upload("test/reachjs/", data, function (err, res) {
+    console.log(err, res.body.result.files);
+  });
+});
+
+
+// Or a file input https://developer.mozilla.org/en-US/docs/Web/API/File
+var file = document.getElementById("my-file-input");
+reach.image.fromFileInput(file, function (err, data) {
+
+  reach.upload("test/reachjs/", data, function (err, res) {
+    console.log(err, res.body.result.files);
+  });
+});
+ ````
+
+Attach a file to an experience
+
+```
+var canvas = document.getElementById("canvas-element-id"); // first upload from canvas
+reach.image.fromCanvas(canvas, function(err, data){
+
+  reach.upload("test/reachjs/", data, function(err, res){
+
+    var exp = {
+      "type":"reach_test",
+      "activationId":"123",
+      "eventId":"456",
+      "photos" : [{
+        "imagePath" : res.body.result.files.file[0].name
+      }]
+    };
+    reach.post("experiences", exp, function (err, res) {
+      console.log(err, res);
+    });
+  });
+});
+
+```
+
 ### Dev
 
 Setup and install
