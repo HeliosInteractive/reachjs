@@ -39,7 +39,7 @@
                 });
             }, type);
         } catch (e) {
-            console.log(e), setTimeout(function() {
+            setTimeout(function() {
                 var regex = new RegExp("data:" + type + ";base64,"), buffer = new Buffer(canvas.toDataURL(type).replace(regex, ""), "base64");
                 callback(null, {
                     name: filename,
@@ -154,8 +154,7 @@
         var extension = "." + img.src.split(".").pop(), canvas = document.createElement("canvas");
         canvas.width = img.width, canvas.height = img.height;
         var ctx = canvas.getContext("2d");
-        ctx.drawImage(img, 0, 0), console.log("extension", extension, image.supportedMimeTypes[extension]), 
-        image.fromCanvas(canvas, image.supportedMimeTypes[extension], callback);
+        ctx.drawImage(img, 0, 0), image.fromCanvas(canvas, image.supportedMimeTypes[extension], callback);
     }, image.fromFileInput = function(file, callback) {
         return image.fromBuffer(file, file.name, callback), file;
     }, image.fromLocalPath = function(path, callback) {

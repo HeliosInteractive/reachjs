@@ -24,15 +24,17 @@ module.exports = function( grunt ) {
         banner: "/*Reach Client v"+pkg.version+"*/\n"
       },
       reach: {
+        options: {
+        },
         files: {
           'dist/reach.js': ['./lib/merge.js','./lib/image.js','./lib/request.js', 'index.js']
         }
       },
       reachmin: {
         options: {
+          drop_console: true,
           mangle: true,
-          beautify: false,
-          wrap: true
+          beautify: false
         },
         files: {
           'dist/reach.min.js': ['./lib/request.js', 'index.js']
