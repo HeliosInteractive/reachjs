@@ -9,7 +9,7 @@ try{
 reach.development(true);
 reach.key = "helios_test";
 
-describe.skip('Reach GET', function() {
+describe('Reach GET', function() {
 
 
   it("Should get an array of guests", function(done){

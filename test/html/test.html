@@ -2,26 +2,14 @@
 <head>
     <meta charset="utf-8">
     <!-- encoding must be set for mocha's special characters to render properly -->
-    <link rel="stylesheet" href="../../node_modules/mocha/mocha.css" />
+    <link rel="stylesheet" href="/node_modules/mocha/mocha.css" />
 </head>
 <body>
 
-<p></p>
-<h3>Upload a file to test input uploads.</h3>
-<input type="file" id="myFile">
-<div id="uploadmessage"></div>
-
 <div id="mocha"></div>
-<script src="../../node_modules/mocha/mocha.js"></script>
-<script src="../../node_modules/should/should.js"></script>
-<script>
-    mocha.ui('bdd');
-</script>
-<script src="../../dist/reach.js"></script>
-<script src="../../test/get.js"></script>
-
 
 <div style="display:none">
+    <img src="/test/cat.jpg" id="myImage" alt="">
     <canvas id="myCanvas" width="300" height="150"></canvas>
     <script>
         var canvas = document.getElementById('myCanvas');
@@ -34,10 +22,12 @@
     </script>
 </div>
 
-
-<script src="../../test/post.js"></script>
-<script>
-    mocha.run();
-</script>
+<script src="/node_modules/mocha/mocha.js"></script>
+<script src="/node_modules/should/should.js"></script>
+<script>mocha.ui('bdd');</script>
+<script src="/dist/reach.js"></script>
+<script src="/test/get.js"></script>
+<script src="/test/post.js"></script>
+<script>mocha.run();</script>
 </body>
 </html>

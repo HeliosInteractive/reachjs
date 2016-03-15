@@ -14,7 +14,7 @@ reach.key = "helios_test";
 
 describe('Reach POST', function() {
 
-  it.skip("Should create a guest", function(done){
+  it("Should create a guest", function(done){
 
     this.timeout(5000);
 
@@ -38,6 +38,19 @@ describe('Reach POST', function() {
       });
     });
 
+  if(isBrowser )
+    it("Should upload a photo from img", function(done){
+
+      this.timeout(5000);
+      var image = document.getElementById("myImage");
+      reach.image.fromImage(image, function(err, data){
+        reach.upload("test/reachjs/", data, function(err, res){
+          /test\/reachjs\//.test(res.body.result.files.file[0].name).should.eql(true);
+          done();
+        });
+      });
+    });
+
   if( !isBrowser )
     it("Should upload a photo from file", function(done){
 
@@ -53,29 +66,22 @@ describe('Reach POST', function() {
     });
 
 
-  if(isBrowser ){
+  if(isBrowser )
+    it("Should upload a photo from file input", function(done) {
 
-    var file = document.getElementById("myFile");
-    file.addEventListener("change", function(e){
+      // spoof a file input with the File object
+      var image = document.getElementById("myImage");
+      reach.image.fromImage(image, function (err, data) {
+        var file = new File([data.data], "cat.jpg");
 
-      (function(done){
-        //this.timeout(5000);
-        reach.image.fromFileInput(e.target.files[0], function(err, data){
-
-          reach.upload("test/reachjs/", data, function(err, res){
-
-            try{
-              /test\/reachjs\//.test(res.body.result.files.file[0].name).should.eql(true);
-            }catch(e){
-              return document.getElementById("uploadmessage").innerHTML = "failed<p>"+ e.message+"</p>";
-            }
-            document.getElementById("uploadmessage").innerHTML = "<p>success</p>";
+        reach.image.fromFileInput(file, function (err, data) {
+          reach.upload("test/reachjs/", data, function (err, res) {
+            /test\/reachjs\//.test(res.body.result.files.file[0].name).should.eql(true);
             done();
           });
         });
-      })(function(){});
+      });
     });
-  }
 
 
 

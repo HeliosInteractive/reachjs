@@ -33,12 +33,28 @@ Browser
 ```
 
 
+### Dev
 
-# Dev
-
+Setup and install
 ```
+git clone ssh://git@helios-stash.heliosinteractive.com:7999/hi/reachjs.git
+cd reachjs &&\
 npm install && npm install grunt grunt-cli -g
-grunt watch
+```
+**Development and testing**
+```
+grunt dev
+```
+The dev task will run watch and a connect static server on port 8000. Open `http://127.0.0.1:8000/test/html/test.html` to run
+the automated browser tests.
+
+Run `grunt mochaTest` to test the node components
+
+---
+
+When you're ready for release run
+```
+npm run build
 ```
 
-Build for distribution `npm run build`
+Submit pull requests to the develop branch

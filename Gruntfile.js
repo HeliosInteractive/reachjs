@@ -4,6 +4,14 @@ module.exports = function( grunt ) {
   var pkg = require("./package.json");
 
   grunt.initConfig({
+    connect: {
+      test: {
+        options: {
+          port: 8000,
+          hostname: '*'
+        }
+      }
+    },
     uglify: {
       options: {
         mangle: false,
@@ -59,6 +67,8 @@ module.exports = function( grunt ) {
 
   // Load grunt tasks from NPM packages
   require( "load-grunt-tasks" )( grunt );
+
+  grunt.registerTask("dev", ["connect", "watch"]);
 
   grunt.registerTask( "build", [ "jshint:all", "uglify" ] );
 
