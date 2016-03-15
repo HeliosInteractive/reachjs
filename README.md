@@ -126,7 +126,7 @@ reach.image.fromFileInput(file, function (err, data) {
     console.log(err, res.body.result.files);
   });
 });
- ````
+```
 
 Attach a file to an experience
 
