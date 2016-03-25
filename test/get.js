@@ -14,6 +14,7 @@ describe('Reach GET', function() {
 
   it("Should get an array of guests", function(done){
 
+    this.timeout(4000);
     reach.get("guests", {}, function reqListener (err, res) {
 
       res.status.should.eql(200);

@@ -69,6 +69,7 @@ describe('Reach POST', function() {
   if(isBrowser )
     it("Should upload a photo from file input", function(done) {
 
+      this.timeout(5000);
       // spoof a file input with the File object
       var image = document.getElementById("myImage");
       reach.image.fromImage(image, function (err, data) {
