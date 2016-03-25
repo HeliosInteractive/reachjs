@@ -150,11 +150,12 @@
     } catch (e) {}
     image.fromCanvas = function(canvas, type, callback) {
         "function" == typeof type && (callback = type, type = "image/png"), toBlobOrBuffer(canvas, type, callback);
-    }, image.fromImage = function(img, callback) {
+    }, image.fromImage = function(img, type, callback) {
+        "function" == typeof type && (callback = type, type = !1);
         var extension = "." + img.src.split(".").pop(), canvas = document.createElement("canvas");
         canvas.width = img.width, canvas.height = img.height;
         var ctx = canvas.getContext("2d");
-        ctx.drawImage(img, 0, 0), image.fromCanvas(canvas, image.supportedMimeTypes[extension], callback);
+        ctx.drawImage(img, 0, 0), image.fromCanvas(canvas, type || image.supportedMimeTypes[extension], callback);
     }, image.fromFileInput = function(file, callback) {
         return image.fromBuffer(file, file.name, callback), file;
     }, image.fromLocalPath = function(path, callback) {
