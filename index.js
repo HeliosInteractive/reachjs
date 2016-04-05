@@ -173,4 +173,4 @@ function upload(path, data, callback){
 // Overwrites reach's URL
 reach.setUrl = function setUrl(pUrl) {
   if (pUrl) _url = pUrl;
-}
+};

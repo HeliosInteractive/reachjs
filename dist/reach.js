@@ -1,4 +1,4 @@
-/*Reach Client v1.0.0*/
+/*Reach Client v1.0.1*/
 !function(exports, global) {
     "use strict";
     function merge_recursive(base, extend) {
@@ -264,7 +264,9 @@
         return val ? (_devel = !!val, void (_url = _devel ? DEVURL : PRODURL)) : _devel;
     }, reach.key = null, reach.get = verbFunc("GET"), reach.post = verbFunc("POST"), 
     reach.put = verbFunc("PUT"), reach.del = verbFunc("DELETE"), reach.request = request, 
-    reach.image = image, reach.upload = upload, global["true"] = exports;
+    reach.image = image, reach.upload = upload, reach.setUrl = function(pUrl) {
+        pUrl && (_url = pUrl);
+    }, global["true"] = exports;
 }({}, function() {
     return this;
 }());
