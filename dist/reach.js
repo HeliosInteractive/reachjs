@@ -93,7 +93,7 @@
     }
     function verbFunc(method) {
         return function(uri, options, callback) {
-            return "object" == typeof options ? options.method = method : "object" == typeof uri && (uri.method = method), 
+            return "function" == typeof options && (callback = options, options = {}), "object" == typeof uri ? uri.method = method : options.method = method, 
             reach(uri, options, callback);
         };
     }
@@ -246,7 +246,7 @@
     };
     "undefined" != typeof module && module.exports ? exports.request = module.exports = http : exports.request = xhr;
     var request, image, DEVURL = "http://reachstaging.herokuapp.com/api/", PRODURL = "http://reachstadiums.herokuapp.com/api/", _devel = !1, _url = PRODURL, reach = function(uri, options, callback) {
-        if ("undefined" == typeof uri) throw new Error("undefined is not a valid uri or options object.");
+        if (console.log(), "undefined" == typeof uri) throw new Error("undefined is not a valid uri or options object.");
         if (!reach.key) throw new Error("reach.key is required");
         "function" == typeof options && (callback = options), "object" == typeof options ? options.uri = uri : options = "string" == typeof uri ? {
             uri: uri
@@ -254,8 +254,8 @@
         options = formatData(options), uri = _url + options.uri, delete options.uri;
         var qs = filter({}, options);
         return qs && (options.qs = qs), !options.headers && (options.headers = {}), options.headers["X-Helios-ID"] = reach.key, 
-        options.headers["Content-Type"] || (options.headers["Content-Type"] = "application/json"), 
-        new request(uri, options, callback);
+        options.headers["Content-Type"] || (options.headers["Content-Type"] = "application/json"),
+        console.log(), new request(uri, options, callback);
     };
     "undefined" != typeof module && module.exports ? module.exports = reach : global.reach = exports.reach = reach, 
     request = exports && exports.request ? exports.request : require("./lib/request"), 
