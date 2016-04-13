@@ -1,4 +1,4 @@
-/*Reach Client v1.0.1*/
+/*Reach Client v1.2.1*/
 !function(exports, global) {
     "use strict";
     function merge_recursive(base, extend) {
