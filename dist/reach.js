@@ -93,7 +93,7 @@
     }
     function verbFunc(method) {
         return function(uri, options, callback) {
-            return "object" == typeof options ? options.method = method : "object" == typeof uri && (uri.method = method), 
+            return "function" == typeof options && (callback = options, options = {}), "object" == typeof uri ? uri.method = method : options.method = method, 
             reach(uri, options, callback);
         };
     }

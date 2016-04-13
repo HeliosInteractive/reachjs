@@ -17,7 +17,6 @@ var _url = PRODURL;
  * @returns {*}
  */
 var reach = function(uri, options, callback) {
-
   if (typeof uri === "undefined")
     throw new Error("undefined is not a valid uri or options object.");
 
@@ -109,11 +108,15 @@ function verbFunc (method) {
 
   return function (uri, options, callback) {
 
-    if( typeof options === "object" )
-      options.method = method;
-    else if( typeof uri === "object" )
+    if( typeof options === "function"  ){
+      callback = options;
+      options = {};
+    }
+    if( typeof uri === "object" )
       uri.method = method;
-
+    else
+      options.method = method;
+    
     return reach(uri, options, callback);
   };
 }
