@@ -88,6 +88,7 @@ function filter(filter, options){
   if(options.include) filter.include = options.include;
   if(options.skip) filter.skip = options.skip;
   if(options.fields) filter.fields = options.fields;
+  if(options.order) filter.order = options.order;
 
   var qs = false;
   // the options are just a query filter

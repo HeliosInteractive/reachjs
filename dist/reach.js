@@ -84,7 +84,7 @@
     function filter(filter, options) {
         options.where && (filter.where = options.where), options.limit && (filter.limit = options.limit), 
         options.include && (filter.include = options.include), options.skip && (filter.skip = options.skip), 
-        options.fields && (filter.fields = options.fields);
+        options.fields && (filter.fields = options.fields), options.order && (filter.order = options.order);
         var qs = !1;
         if (Object.keys(filter).length > 0) try {
             qs = JSON.stringify(filter), qs = "filter=" + qs;
