@@ -139,8 +139,18 @@ var data =  {
 reach.upload("test/reachjs/", data, function (err, res) {
   console.log(err, res.body.result.files);
 });
+```
+
+Set image type and/or quality. Quality is a value between 0 and 1 and can be set in `fromCanvas` or `fromImage`
 
 ```
+var canvas = document.getElementById("myCanvas");
+reach.image.fromCanvas(canvas, {type:"image/jpeg",quality:0.1},function(err, data){
+  // upload image
+});
+```
+
+ > quality only works for `image/jpeg`
 
 Attach a file to an experience
 

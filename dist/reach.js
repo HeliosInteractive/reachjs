@@ -28,22 +28,22 @@
             return d = Math.floor(d / 16), ("x" === c ? r : 3 & r | 8).toString(16);
         });
     }
-    function toBlobOrBuffer(canvas, type, callback) {
-        var filename = uuid() + image.supportedMimeTypes[type];
+    function toBlobOrBuffer(canvas, options, callback) {
+        var filename = uuid() + image.supportedMimeTypes[options.type];
         try {
             canvas.toBlob(function(blob) {
                 callback(null, {
                     name: filename,
-                    type: type,
+                    type: options.type,
                     data: blob
                 });
-            }, type);
+            }, options.type, options.quality);
         } catch (e) {
             setTimeout(function() {
-                var regex = new RegExp("data:" + type + ";base64,"), buffer = new Buffer(canvas.toDataURL(type).replace(regex, ""), "base64");
+                var regex = new RegExp("data:" + options.type + ";base64,"), buffer = new Buffer(canvas.toDataURL(options.type, options.quality).replace(regex, ""), "base64");
                 callback(null, {
                     name: filename,
-                    type: type,
+                    type: options.type,
                     data: buffer
                 });
             }, 1);
@@ -135,6 +135,7 @@
         ".mp4": "video/mp4",
         "image/png": ".png",
         "image/jpg": ".jpg",
+        "image/jpeg": ".jpg",
         "image/gif": ".gif",
         "video/mp4": ".mp4"
     };
@@ -148,14 +149,25 @@
             }
         });
     } catch (e) {}
-    image.fromCanvas = function(canvas, type, callback) {
-        "function" == typeof type && (callback = type, type = "image/png"), toBlobOrBuffer(canvas, type, callback);
-    }, image.fromImage = function(img, type, callback) {
-        "function" == typeof type && (callback = type, type = !1);
-        var extension = "." + img.src.split(".").pop(), canvas = document.createElement("canvas");
+    image.fromCanvas = function(canvas, options, callback) {
+        "function" == typeof options && (callback = options, options = "image/png"), "string" == typeof options && (options = {
+            type: options,
+            quality: 1
+        }), options.type || (options.type = "image/png"), options.quality || (options.quality = 1), 
+        toBlobOrBuffer(canvas, options, callback);
+    }, image.fromImage = function(img, options, callback) {
+        var extension = "." + img.src.split(".").pop();
+        "function" == typeof options && (callback = options, options = {
+            type: image.supportedMimeTypes[extension],
+            quality: 1
+        }), "string" == typeof options && (options = {
+            type: options,
+            quality: 1
+        });
+        var canvas = document.createElement("canvas");
         canvas.width = img.width, canvas.height = img.height;
         var ctx = canvas.getContext("2d");
-        ctx.drawImage(img, 0, 0), image.fromCanvas(canvas, type || image.supportedMimeTypes[extension], callback);
+        ctx.drawImage(img, 0, 0), image.fromCanvas(canvas, options, callback);
     }, image.fromFileInput = function(file, callback) {
         return image.fromBuffer(file, file.name, callback), file;
     }, image.fromLocalPath = function(path, callback) {
