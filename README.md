@@ -41,14 +41,14 @@ Point to the staging server for testing. Defaults to production
 
 ```
 var reach = require("reach");
-reach.key = "helios_test";
-reach.development(true); // point to reachstaging.herokuapp.com
+reach.key = ""; // set your api key
+reach.setUrl("http://domainorip.com/api/");
 ```
 
 Get a guest by email
 
 ```
-reach.get("guests", {where : {email:"michael.neil@heliosinteractive.com"} }, function (err, res) {
+reach.get("guests", {where : {email:"test@heliosinteractive.com"} }, function (err, res) {
   console.log(err, res.body[0] && res.body[0].email);
 });
 ```
@@ -56,7 +56,7 @@ reach.get("guests", {where : {email:"michael.neil@heliosinteractive.com"} }, fun
 Update a guest by email
 
 ```
-reach.put("guests", {email:"michael.neil@heliosinteractive.com", "firstName":"Michael"}, function (err, res) {
+reach.put("guests", {email:"test@heliosinteractive.com", "firstName":"Michael"}, function (err, res) {
   console.log(err, res.body[0] && res.body[0].email);
 });
 ```
@@ -181,7 +181,7 @@ reach.image.fromCanvas(canvas, function(err, data){
 Setup and install
 
 ```
-git clone ssh://git@helios-stash.heliosinteractive.com:7999/hi/reachjs.git
+git clone ssh+git@github.com:HeliosInteractive/reachjs.git
 cd reachjs &&\
 npm install && npm install grunt grunt-cli -g
 ```
