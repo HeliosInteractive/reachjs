@@ -1,4 +1,4 @@
-/*Reach Client v1.2.1*/
+/*Reach Client v2.0.1*/
 !function(exports, global) {
     "use strict";
     function merge_recursive(base, extend) {
@@ -257,7 +257,8 @@
         form ? form.pipe(req) : opts.data && req.write(JSON.stringify(opts.data)), req.end();
     };
     "undefined" != typeof module && module.exports ? exports.request = module.exports = http : exports.request = xhr;
-    var request, image, DEVURL = "http://reachstaging.herokuapp.com/api/", PRODURL = "http://reachstadiums.herokuapp.com/api/", _devel = !1, _url = PRODURL, reach = function(uri, options, callback) {
+    var request, image, _url, reach = function(uri, options, callback) {
+        if (!_url) throw new Error("set the url for reach with reachjs.setUrl('')");
         if ("undefined" == typeof uri) throw new Error("undefined is not a valid uri or options object.");
         if (!reach.key) throw new Error("reach.key is required");
         "function" == typeof options && (callback = options), "object" == typeof options ? options.uri = uri : options = "string" == typeof uri ? {
@@ -272,11 +273,12 @@
     "undefined" != typeof module && module.exports ? module.exports = reach : global.reach = exports.reach = reach, 
     request = exports && exports.request ? exports.request : require("./lib/request"), 
     image = exports && exports.image ? exports.image : require("./lib/image"), exports && exports.merge || (exports.merge = require("./lib/merge")), 
-    reach.development = function(val) {
-        return val ? (_devel = !!val, void (_url = _devel ? DEVURL : PRODURL)) : _devel;
-    }, reach.key = null, reach.get = verbFunc("GET"), reach.post = verbFunc("POST"), 
-    reach.put = verbFunc("PUT"), reach.del = verbFunc("DELETE"), reach.request = request, 
-    reach.image = image, reach.upload = upload, reach.setUrl = function(pUrl) {
+    reach.key = null, reach.get = verbFunc("GET"), reach.post = verbFunc("POST"), reach.put = verbFunc("PUT"), 
+    reach.del = verbFunc("DELETE"), reach.request = request, reach.image = image, reach.upload = upload, 
+    reach.development = function() {
+        console.error("reach.development is no longer supported. Set the url explicitly with reach.setUrl()");
+    }, reach.setUrl = function(pUrl) {
+        "/" !== pUrl.substr(-1) && (pUrl += "/"), "api/" !== pUrl.substr(-4) && (pUrl += "api/"), 
         pUrl && (_url = pUrl);
     }, global["true"] = exports;
 }({}, function() {

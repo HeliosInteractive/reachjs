@@ -1,11 +1,7 @@
 "use strict";
 
-var DEVURL = "http://reachstaging.herokuapp.com/api/";
-var PRODURL = "http://reachstadiums.herokuapp.com/api/";
-
 var request, image;
-var _devel = false;
-var _url = PRODURL;
+var _url;
 /**
  * Make HTTP requests to reach
  * @param {string|options} uri
@@ -17,6 +13,10 @@ var _url = PRODURL;
  * @returns {*}
  */
 var reach = function(uri, options, callback) {
+
+  if( !_url )
+    throw new Error("set the url for reach with reachjs.setUrl('')");
+
   if (typeof uri === "undefined")
     throw new Error("undefined is not a valid uri or options object.");
 
@@ -130,17 +130,6 @@ image = ( exports && exports.image ) ? exports.image : require("./lib/image");
 if( !exports || !exports.merge )
   exports.merge = require("./lib/merge");
 
-/**
- * Get environment or
- * Set reach into development or production mode
- * @param {boolean} val
- * @returns {boolean}
- */
-reach.development = function(val){
-  if(!val) return _devel;
-  _devel = !!val;
-  _url = _devel ? DEVURL : PRODURL;
-};
 reach.key = null;
 reach.get = verbFunc("GET");
 reach.post = verbFunc("POST");
@@ -173,8 +162,12 @@ function upload(path, data, callback){
     data : data
   }, callback);
 }
-
-// Overwrites reach's URL
-reach.setUrl = function setUrl(pUrl) {
+reach.development = function(){
+  console.error("reach.development is no longer supported. Set the url explicitly with reach.setUrl()");
+};
+// set your endpoint
+reach.setUrl = function(pUrl) {
+  if( pUrl.substr(-1) !== "/" ) pUrl += "/";
+  if( pUrl.substr(-4) !== "api/" ) pUrl += "api/";
   if (pUrl) _url = pUrl;
 };

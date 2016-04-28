@@ -7,6 +7,7 @@ try{
   should = require('should');
   reach = require('../index.js');
   fs = require('fs');
+  require('./config.js')(reach);
 }
 
 reach.development(true);

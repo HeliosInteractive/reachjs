@@ -195,6 +195,8 @@ grunt dev
 The dev task will run watch and a connect static server on port 8000. Open `http://127.0.0.1:8000/test/html/test.html` to run
 the automated browser tests.
 
+> copy test/config.dist.js to test/config.js and set your api key for testing
+
 Run `grunt mochaTest` to test the node components
 
 ---

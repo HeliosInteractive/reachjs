@@ -4,10 +4,8 @@ try{
 }catch(e){
   should = require('should');
   reach = require('../index.js');
+  require('./config.js')(reach);
 }
-
-reach.development(true);
-reach.key = "helios_test";
 
 describe('Reach GET', function() {
 
