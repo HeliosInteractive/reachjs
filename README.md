@@ -7,7 +7,7 @@ Perform common actions with the Helios Reach API in Node and the browser.
 Node
 
 ```
-npm install git+helios-stash.heliosinteractive.com:7999/hi/reachjs.git --save
+npm install git+git@github.com:HeliosInteractive/reachjs.git --save
 ```
 
 If you are not authenticated with stash through ssh then you can try the https path or clone the repo into node_modules
@@ -15,7 +15,7 @@ and manually run `npm install`.
 
 ```
 var reach = require("reach");
-reach.key = "helios_test";
+reach.key = "";
 reach.get("guests", function(err, res){
   console.log(err, res);
 });
@@ -28,7 +28,7 @@ Browser
 ```
 <script src="./dist/reach.min.js"></script>
 <script>
-    reach.key = "helios_test";
+    reach.key = "";
     reach.get("guests", function (err, res) {
       console.log(err, res);
     });
