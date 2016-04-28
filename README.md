@@ -1,6 +1,6 @@
 # Reach JS Client
 
-Perform common actions with the Helios Reach API in Node and the browser.
+Perform common actions with the Loopback API in Node and the browser.
 
 ---
 
@@ -10,8 +10,8 @@ Node
 npm install git+git@github.com:HeliosInteractive/reachjs.git --save
 ```
 
-If you are not authenticated with stash through ssh then you can try the https path or clone the repo into node_modules
-and manually run `npm install`.
+Helios uses a custom header for authentication. You can also pass in an access token in the request query string for
+loopback apps.
 
 ```
 var reach = require("reach");
