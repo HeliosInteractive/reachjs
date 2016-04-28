@@ -7,7 +7,7 @@ Perform common actions with the Loopback API in Node and the browser.
 Node
 
 ```
-npm install git+git@github.com:HeliosInteractive/reachjs.git --save
+npm install ssh+git@github.com:HeliosInteractive/reachjs.git#v2.0.1 --save
 ```
 
 Helios uses a custom header for authentication. You can also pass in an access token in the request query string for
