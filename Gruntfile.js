@@ -20,8 +20,9 @@ module.exports = function( grunt ) {
         width : 120,
         semicolons: false,
         quote_style: 1,
-        wrap: true,
-        banner: "/*Reach Client v"+pkg.version+"*/\n"
+        //wrap: 'window',
+        banner: "/*Reach Client v"+pkg.version+"*/\n!function(exports, global) {",
+        footer: "}({}, function() {return this || window || {};}());"
       },
       reach: {
         options: {
