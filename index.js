@@ -20,8 +20,8 @@ var reach = function(uri, options, callback) {
   if (typeof uri === "undefined")
     throw new Error("undefined is not a valid uri or options object.");
 
-  if( !reach.key )
-    throw new Error("reach.key is required");
+  if( !reach.key && (options.qs && !options.qs.access_token) )
+    throw new Error("reach.key or token is required");
 
   if( typeof options === "function" )
     callback = options;
@@ -42,10 +42,11 @@ var reach = function(uri, options, callback) {
   delete options.uri;
 
   var qs = filter({}, options);
-  if( qs ) options.qs = qs;
+  if( !options.qs ) options.qs = {};
+  if( qs ) options.qs.filter = qs;
 
   !options.headers && (options.headers = {});
-  options.headers["X-Helios-ID"] = reach.key;
+  if( reach.key ) options.headers["X-Helios-ID"] = reach.key;
 
   if( !options.headers["Content-Type"] )
     options.headers["Content-Type"] = "application/json";
@@ -94,7 +95,7 @@ function filter(filter, options){
   if(Object.keys(filter).length > 0){
     try{
       qs = JSON.stringify(filter);
-      qs = "filter=" + qs;
+      //qs = "filter=" + qs;
     }catch(e){}
   }
   return qs;
