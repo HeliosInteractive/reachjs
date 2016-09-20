@@ -5,7 +5,8 @@ try{
   if( window ) isBrowser = true;
 }catch(e){
   should = require('should');
-  reach = require('../index.js');
+  //reach = require('../index.js');
+  reach = require('../dist/reach.js');
   fs = require('fs');
   require('./config.js')(reach);
 }

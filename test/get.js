@@ -3,7 +3,8 @@ try{
   reach = reach;
 }catch(e){
   should = require('should');
-  reach = require('../index.js');
+  //reach = require('../index.js');
+  reach = require('../dist/reach.js');
   require('./config.js')(reach);
 }
 

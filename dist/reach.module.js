@@ -1,31 +1,6 @@
-/*Reach Client v2.1.0*/
-(function(factory) {
-    
-    // Establish the root object, window (self) in the browser, or global on the server.
-    // We use self instead of window for WebWorker support.
-    var root = (typeof self == 'object' && self.self === self && self) ||
-        (typeof module == 'object' && module);
-
-    // Set up reach appropriately for the environment. Start with AMD.
-    if (typeof define === 'function' && define.amd) {
-      define('reach', ['exports'], function(exports) {
-        // Export global even in AMD case in case this script is loaded with
-        // others that may still expect a global reach.
-        root.reach = factory();
-        // return reach for correct AMD use
-        return root.reach;
-      });
-
-      // Next for Node.js or CommonJS.
-    } else if (typeof exports !== 'undefined') {
-        root.exports = factory();
-      // Finally, as a browser global.
-    } else {
-      root.reach = factory();
-    }
-
-  })(function() {
-  "use strict";
+/*Reach Client ES6 Module v2.1.0*/
+export var reach = (function() {
+ "use strict";
 
 function formatData(options) {
     if ("POST" !== options.method && "PUT" !== options.method) return options;
@@ -312,4 +287,4 @@ reach.development = function() {
     pUrl && (_url = pUrl);
 };
     return reach;
-  });
+  })();

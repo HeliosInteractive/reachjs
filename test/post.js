@@ -5,7 +5,8 @@ try{
   if( window ) isBrowser = true;
 }catch(e){
   should = require('should');
-  reach = require('../index.js');
+  //reach = require('../index.js');
+  reach = require('../dist/reach.js');
   fs = require('fs');
   require('./config.js')(reach);
 }
@@ -44,7 +45,7 @@ describe('Reach POST', function() {
 
       this.timeout(5000);
       var canvas = document.getElementById("myCanvas");
-      reach.image.fromCanvas(canvas, "image/jpg", function(err, data){
+      reach.image.fromCanvas(canvas, "image/jpeg", function(err, data){
         reach.upload("test/reachjs/", data, function(err, res){
           res.body.result.files.file[0].name.should.containEql('.jpg');
           done();
@@ -120,7 +121,7 @@ describe('Reach POST', function() {
       // spoof a file input with the File object
       var image = document.getElementById("myImage");
       reach.image.fromImage(image, function (err, data) {
-        var file = new File([data.data], "cat.jpg");
+        var file = new File([data.data], "cat.jpg", {type: data.type});
 
         reach.image.fromFileInput(file, function (err, data) {
           reach.upload("test/reachjs/", data, function (err, res) {

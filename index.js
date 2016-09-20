@@ -12,7 +12,7 @@ var _url;
  * @callback callback
  * @returns {*}
  */
-var reach = function(uri, options, callback) {
+var reach = function(uri, options, callback) {// jshint ignore:line
 
   if( !_url )
     throw new Error("set the url for reach with reachjs.setUrl('')");
@@ -65,7 +65,7 @@ function formatData(options){
   if( options.headers && options.headers["Content-Type"] === "multipart/form-data")
     return options;
 
-  var data = exports.merge(true,options);
+  var data = merge(true,options);// jshint ignore:line
   delete data.headers;
   delete data.uri;
   delete data.data;
@@ -120,15 +120,6 @@ function verbFunc (method) {
     return reach(uri, options, callback);
   };
 }
-if( typeof module !== "undefined" && module.exports )
-  module.exports = reach; // node
-else
-  global.reach = exports.reach = reach;
-
-request = ( exports && exports.request ) ? exports.request : require("./lib/request");
-image = ( exports && exports.image ) ? exports.image : require("./lib/image");
-if( !exports || !exports.merge )
-  exports.merge = require("./lib/merge");
 
 reach.key = null;
 reach.get = verbFunc("GET");
@@ -153,7 +144,7 @@ function upload(path, data, callback){
   // image - canvas, <img/>, <input/>
   if( path.substr(0, 1) === "/" )
     path = path.substr(1);
-
+  
   reach("containers/reachdata/upload", {
     method : "POST",
     headers : {

@@ -1,7 +1,7 @@
 {
   "name": "reachjs",
   "description": "Helios Reach API Javascript Client",
-  "version": "2.0.2",
+  "version": "2.1.0",
   "engines": {
     "node": "5.4.0",
     "npm": "3.3.12"
@@ -16,7 +16,8 @@
   "scripts": {
     "build": "grunt build"
   },
-  "main": "index.js",
+  "main": "dest/reach.js",
+  "jsnext:main": "dist/reach.module.js",
   "dependencies": {
     "form-data": "git+https://github.com/mneil/form-data"
   },
