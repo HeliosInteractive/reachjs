@@ -4,10 +4,10 @@ Perform common actions with the Loopback API in Node and the browser.
 
 ---
 
-Node
+Node / Commonjs
 
 ```
-npm install ssh+git@github.com:HeliosInteractive/reachjs.git#v2.0.1 --save
+npm install git+https://github.com/HeliosInteractive/reachjs.git#v2.1.0 --save
 ```
 
 Helios uses a custom header for authentication. You can also pass in an access token in the request query string for
@@ -15,6 +15,7 @@ loopback apps.
 
 ```
 var reach = require("reach");
+reach.setUrl("");
 reach.key = "";
 reach.get("guests", function(err, res){
   console.log(err, res);
@@ -28,12 +29,30 @@ Browser
 ```
 <script src="./dist/reach.min.js"></script>
 <script>
-    reach.key = "";
-    reach.get("guests", function (err, res) {
-      console.log(err, res);
-    });
+  reach.setUrl("");
+  reach.key = "";
+  reach.get("guests", function (err, res) {
+    console.log(err, res);
+  });
 </script>
 ```
+
+AMD
+```
+define(['reach'], function (reach) {
+  reach.setUrl("");
+  reach.key = "";
+});
+```
+
+Module
+```
+import { reach } from 'reachjs';
+
+reach.setUrl("");
+reach.key = "";
+```
+
 
 # Common Usage
 
