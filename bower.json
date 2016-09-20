@@ -1,7 +1,7 @@
 {
   "name": "reachjs",
   "homepage": "https://github.com/HeliosInteractive/reachjs",
-  "version": "2.1.0",
+  "version": "2.1.1",
   "main": "dist/reach.js",
-  "jsnext:main": "dist/reach.module.js",
+  "jsnext:main": "dist/reach.module.js"
 }
