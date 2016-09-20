@@ -16,7 +16,7 @@ function filter(filter, options) {
     options.fields && (filter.fields = options.fields), options.order && (filter.order = options.order);
     var qs = !1;
     if (Object.keys(filter).length > 0) try {
-        qs = JSON.stringify(filter), qs = "filter=" + qs;
+        qs = JSON.stringify(filter);
     } catch (e) {}
     return qs;
 }
@@ -248,9 +248,9 @@ var merge = function() {
         function httpError(err) {
             callback(err);
         }
-        var http = require("http"), url = require("url");
+        var url = require("url");
         uri += querystring(opts.qs);
-        var parsed = url.parse(uri, !0, !0), reqOptions = {
+        var parsed = url.parse(uri, !0, !0), http = require("https:" === parsed.protocol ? "https" : "http"), reqOptions = {
             host: parsed.hostname,
             protocol: parsed.protocol,
             port: parsed.port,
@@ -267,14 +267,14 @@ var merge = function() {
 }(), request, image, _url, reach = function(uri, options, callback) {
     if (!_url) throw new Error("set the url for reach with reachjs.setUrl('')");
     if ("undefined" == typeof uri) throw new Error("undefined is not a valid uri or options object.");
-    if (!reach.key) throw new Error("reach.key is required");
+    if (!reach.key && options.qs && !options.qs.access_token) throw new Error("reach.key or token is required");
     "function" == typeof options && (callback = options), "object" == typeof options ? options.uri = uri : options = "string" == typeof uri ? {
         uri: uri
     } : uri, "/" === options.uri.substr(0, 1) && (options.uri = options.uri.substr(1)), 
     options = formatData(options), uri = _url + options.uri, delete options.uri;
     var qs = filter({}, options);
-    return qs && (options.qs = qs), !options.headers && (options.headers = {}), options.headers["X-Helios-ID"] = reach.key, 
-    options.headers["Content-Type"] || (options.headers["Content-Type"] = "application/json"), 
+    return options.qs || (options.qs = {}), qs && (options.qs.filter = qs), !options.headers && (options.headers = {}), 
+    reach.key && (options.headers["X-Helios-ID"] = reach.key), options.headers["Content-Type"] || (options.headers["Content-Type"] = "application/json"), 
     new request(uri, options, callback);
 };
 
