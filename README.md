@@ -74,9 +74,9 @@ Makes a get request to an endpoint with options and a callback
 
 **parameters**
 
-uri {string} the endpoint to request
-options {object} optional parameters /filters @see [options](#options)
-done {function} called with err, res prameters @see [done](#done)
+ - uri {string} the endpoint to request
+ - options {object} optional parameters /filters @see [options](#options)
+ - done {function} called with err, res prameters @see [done](#done
 
 _usage_
 ```
@@ -97,9 +97,9 @@ Makes a postt request to an endpoint with options and a callback
 
 **parameters**
 
-uri {string} the endpoint to request
-options {object} optional parameters /filters @see [options](#options)
-done {function} called with err, res prameters @see [done](#done)
+ - uri {string} the endpoint to request
+ - options {object} optional parameters /filters @see [options](#options)
+ - done {function} called with err, res prameters @see [done](#done)
 
 _usage_
 ```
@@ -115,9 +115,9 @@ Makes a put request to an endpoint with options and a callback
 
 **parameters**
 
-uri {string} the endpoint to request
-options {object} optional parameters /filters @see [options](#options)
-done {callback} called with err, res prameters @see [done](#done)
+ - uri {string} the endpoint to request
+ - options {object} optional parameters /filters @see [options](#options)
+ - done {callback} called with err, res prameters @see [done](#done)
 
 _usage_
 ```
@@ -144,10 +144,10 @@ Uploads a file
 
 **parameters**
 
-activation {string} an activation id
-data {object} form data object returned from reach.image
-options {object} addtional options for files
-done {callback} called with err, res prameters @see [done](#done)
+ - activation {string} an activation id
+ - data {object} form data object returned from reach.image
+ - options {object} addtional options for files
+ - done {callback} called with err, res prameters @see [done](#done)
 
 _usage_
 ```
@@ -175,50 +175,47 @@ reach.image.fromImage(image, function(err, data){
 
 **fromCanvas**
 
-canvas {Canvas} HTML canvas element
-options {object}
- - quality {integer} (0-1)
- - type {string} "image/png", "image/jpeg", "image/gif"
-
-done {function} err, data
+ - canvas {Canvas} HTML canvas element
+ - options {object}
+   - quality {integer} (0-1)
+   - type {string} "image/png", "image/jpeg", "image/gif"
+ - done {function} err, data
 
 **fromImage**
 
-image {Image} HTMl Image element
-options {object}
- - quality {integer} (0-1)
- - type {string} "image/png", "image/jpeg", "image/gif"
-
-done {function} err, data
+ - image {Image} HTMl Image element
+ - options {object}
+   - quality {integer} (0-1)
+   - type {string} "image/png", "image/jpeg", "image/gif"
+ - done {function} err, data
 
 **fromFileInput**
 
-file {FileInput} HTML file imput element
-done {function} err, data
+ - file {FileInput} HTML file imput element
+ - done {function} err, data
 
 **fromLocalPath**
 
-file {string} path to file on on disk (nodejs only)
-done {function} err, data
+ - file {string} path to file on on disk (nodejs only)
+ - done {function} err, data
 
 **fromBuffer**
 
-buffer {Buffer} Buffer object
-name {string} filename.extension
-done {function} err, data
+ - buffer {Buffer} Buffer object
+ - name {string} filename.extension
+ - done {function} err, data
 
 ### request
 
 Underlying call to the request object. Must make a new request object for each call. You can make a request to any url with this method. Reach client wraps this exposed method.
 
-uri {string} The full uri to request
-opts {object} Options object
- - data : request data to use in the body of the request
- - qs : serializable query string data or a string
- - method : request method
- - headers : request headers
-
-done {function} called with err, res prameters @see [done](#done)
+ - uri {string} The full uri to request
+ - opts {object} Options object
+   - data : request data to use in the body of the request
+   - qs : serializable query string data or a string
+   - method : request method
+   - headers : request headers
+ - done {function} called with err, res prameters @see [done](#done)
 
 ```
 new reach.request("http://localhost", {}, (err, res) => {});
