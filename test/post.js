@@ -11,6 +11,7 @@ try{
   require('./config.js')(reach);
 }
 
+var activation = "1e637007-f4bc-4ad2-bc0c-386550df6662";
 reach.development(true);
 reach.key = "helios_test";
 
@@ -33,8 +34,22 @@ describe('Reach POST', function() {
       this.timeout(5000);
       var canvas = document.getElementById("myCanvas");
       reach.image.fromCanvas(canvas, function(err, data){
-        reach.upload("test/reachjs/", data, function(err, res){
-          /test\/reachjs\//.test(res.body.result.files.file[0].name).should.eql(true);
+        reach.upload(activation, data, function(err, res){
+          res.body[0].access.should.eql('public');
+          /helios\/uploads\/test_hockey/.test(res.body[0].path).should.eql(true);
+          done();
+        });
+      });
+    });
+
+  if(isBrowser )
+    it("Should upload a private from canvas", function(done){
+
+      this.timeout(5000);
+      var canvas = document.getElementById("myCanvas");
+      reach.image.fromCanvas(canvas, function(err, data){
+        reach.upload(activation, data, {private:"true"}, function(err, res){
+          res.body[0].access.should.eql('private');
           done();
         });
       });
@@ -46,8 +61,8 @@ describe('Reach POST', function() {
       this.timeout(5000);
       var canvas = document.getElementById("myCanvas");
       reach.image.fromCanvas(canvas, "image/jpeg", function(err, data){
-        reach.upload("test/reachjs/", data, function(err, res){
-          res.body.result.files.file[0].name.should.containEql('.jpg');
+        reach.upload(activation, data, function(err, res){
+          res.body[0].name.should.containEql('.jpg');
           done();
         });
       });
@@ -92,8 +107,8 @@ describe('Reach POST', function() {
       this.timeout(5000);
       var image = document.getElementById("myImage");
       reach.image.fromImage(image, function(err, data){
-        reach.upload("test/reachjs/", data, function(err, res){
-          /test\/reachjs\//.test(res.body.result.files.file[0].name).should.eql(true);
+        reach.upload(activation, data, function(err, res){
+          /helios\/uploads\/test_hockey/.test(res.body[0].path).should.eql(true);
           done();
         });
       });
@@ -105,9 +120,9 @@ describe('Reach POST', function() {
       this.timeout(5000);
 
       reach.image.fromLocalPath(__dirname + "/reach.png", function(err, data){
-        reach.upload("test/reachjs/", data, function(err, res){
+        reach.upload(activation, data, function(err, res){
 
-          /test\/reachjs\//.test(res.body.result.files.file[0].name).should.eql(true);
+          /helios\/uploads\/test_hockey/.test(res.body[0].path).should.eql(true);
           done();
         });
       });
@@ -124,8 +139,8 @@ describe('Reach POST', function() {
         var file = new File([data.data], "cat.jpg", {type: data.type});
 
         reach.image.fromFileInput(file, function (err, data) {
-          reach.upload("test/reachjs/", data, function (err, res) {
-            /test\/reachjs\//.test(res.body.result.files.file[0].name).should.eql(true);
+          reach.upload(activation, data, function (err, res) {
+            /helios\/uploads\/test_hockey/.test(res.body[0].path).should.eql(true);
             done();
           });
         });

@@ -1,4 +1,4 @@
-/*Reach Client v2.1.0*/
+/*Reach Client v3.0.0*/
 (function(factory) {
     
     // Establish the root object, window (self) in the browser, or global on the server.
@@ -47,23 +47,25 @@ function filter(filter, options) {
 }
 
 function verbFunc(method) {
-    return function(uri, options, callback) {
-        return "function" == typeof options && (callback = options, options = {}), "object" == typeof uri ? uri.method = method : options.method = method, 
-        reach(uri, options, callback);
+    return function(uri, options, done) {
+        return "function" == typeof options && (done = options, options = {}), "object" == typeof uri ? uri.method = method : options.method = method, 
+        reach(uri, options, done);
     };
 }
 
-function upload(path, data, callback) {
-    data[0] ? data = data.map(function(obj) {
-        return obj.path = path + obj.name, obj;
-    }) : data.path = path + data.name, "/" === path.substr(0, 1) && (path = path.substr(1)), 
-    reach("containers/reachdata/upload", {
+function upload(activationId, data, options, done) {
+    "function" == typeof options && (done = options, options = {}), data[0] ? data = data.map(function(obj) {
+        return obj.path = obj.name, obj;
+    }) : data.path = data.name, reach("files/upload/" + activationId, {
         method: "POST",
+        qs: {
+            options: JSON.stringify(options)
+        },
         headers: {
             "Content-Type": "multipart/form-data"
         },
         data: data
-    }, callback);
+    }, done);
 }
 
 var merge = function() {
@@ -109,11 +111,11 @@ var merge = function() {
             return d = Math.floor(d / 16), ("x" === c ? r : 3 & r | 8).toString(16);
         });
     }
-    function toBlobOrBuffer(canvas, options, callback) {
+    function toBlobOrBuffer(canvas, options, done) {
         var filename = uuid() + image.supportedMimeTypes[options.type];
         try {
             canvas.toBlob(function(blob) {
-                callback(null, {
+                done(null, {
                     name: filename,
                     type: options.type,
                     data: blob
@@ -122,7 +124,7 @@ var merge = function() {
         } catch (e) {
             setTimeout(function() {
                 var regex = new RegExp("data:" + options.type + ";base64,"), buffer = new Buffer(canvas.toDataURL(options.type, options.quality).replace(regex, ""), "base64");
-                callback(null, {
+                done(null, {
                     name: filename,
                     type: options.type,
                     data: buffer
@@ -147,23 +149,23 @@ var merge = function() {
     };
     try {
         HTMLCanvasElement.prototype.toBlob || Object.defineProperty(HTMLCanvasElement.prototype, "toBlob", {
-            value: function(callback, type, quality) {
+            value: function(done, type, quality) {
                 for (var binStr = atob(this.toDataURL(type, quality).split(",")[1]), len = binStr.length, arr = new Uint8Array(len), i = 0; len > i; i++) arr[i] = binStr.charCodeAt(i);
-                callback(new Blob([ arr ], {
+                done(new Blob([ arr ], {
                     type: type || "image/png"
                 }));
             }
         });
     } catch (e) {}
-    return image.fromCanvas = function(canvas, options, callback) {
-        "function" == typeof options && (callback = options, options = "image/png"), "string" == typeof options && (options = {
+    return image.fromCanvas = function(canvas, options, done) {
+        "function" == typeof options && (done = options, options = "image/png"), "string" == typeof options && (options = {
             type: options,
             quality: 1
         }), options.type || (options.type = "image/png"), options.quality || (options.quality = 1), 
-        toBlobOrBuffer(canvas, options, callback);
-    }, image.fromImage = function(img, options, callback) {
+        toBlobOrBuffer(canvas, options, done);
+    }, image.fromImage = function(img, options, done) {
         var extension = "." + img.src.split(".").pop();
-        "function" == typeof options && (callback = options, options = {
+        "function" == typeof options && (done = options, options = {
             type: image.supportedMimeTypes[extension],
             quality: 1
         }), "string" == typeof options && (options = {
@@ -173,22 +175,22 @@ var merge = function() {
         var canvas = document.createElement("canvas");
         canvas.width = img.width, canvas.height = img.height;
         var ctx = canvas.getContext("2d");
-        ctx.drawImage(img, 0, 0), image.fromCanvas(canvas, options, callback);
-    }, image.fromFileInput = function(file, callback) {
-        return image.fromBuffer(file, file.name, callback), file;
-    }, image.fromLocalPath = function(path, callback) {
+        ctx.drawImage(img, 0, 0), image.fromCanvas(canvas, options, done);
+    }, image.fromFileInput = function(file, done) {
+        return image.fromBuffer(file, file.name, done), file;
+    }, image.fromLocalPath = function(path, done) {
         try {
             require("fs").readFile(path, function(err, data) {
-                image.fromBuffer(data, path, callback);
+                image.fromBuffer(data, path, done);
             });
         } catch (e) {
             throw new Error("reach.image.fromLocalPath only supported in node.");
         }
         return path;
-    }, image.fromBuffer = function(buffer, path, callback) {
+    }, image.fromBuffer = function(buffer, path, done) {
         setTimeout(function() {
             var extension = "." + path.split(".").pop();
-            callback(null, buffer && {
+            done(null, buffer && {
                 name: uuid() + extension,
                 type: image.supportedMimeTypes[extension],
                 data: buffer
@@ -221,9 +223,9 @@ var merge = function() {
             basename: !1
         }), form;
     }
-    var xhr = function(uri, opts, callback) {
+    var xhr = function(uri, opts, done) {
         function xhrError(err) {
-            callback(err);
+            done(err);
         }
         function xhrResponse(res) {
             var response = {
@@ -236,7 +238,7 @@ var merge = function() {
                 var body = JSON.parse(res.target.response);
                 response.body = body;
             } catch (e) {}
-            callback(null, response);
+            done(null, response);
         }
         var self = this;
         self.oReq = new XMLHttpRequest(), uri += querystring(opts.qs), self.oReq.addEventListener("load", xhrResponse), 
@@ -250,7 +252,7 @@ var merge = function() {
     xhr.prototype.setHeaders = function(headers, key) {
         this.oReq.setRequestHeader(key, headers[key]);
     };
-    var http = function(uri, opts, callback) {
+    var http = function(uri, opts, done) {
         function httpResponse(res) {
             function onData(chunk) {
                 response.body += chunk;
@@ -260,7 +262,7 @@ var merge = function() {
                     var body = JSON.parse(response.body);
                     response.body = body;
                 } catch (e) {}
-                callback(null, response);
+                done(null, response);
             }
             var response = {
                 body: "",
@@ -271,7 +273,7 @@ var merge = function() {
             res.setEncoding("utf8"), res.on("data", onData), res.on("end", onEnd);
         }
         function httpError(err) {
-            callback(err);
+            done(err);
         }
         var url = require("url");
         uri += querystring(opts.qs);
@@ -289,18 +291,18 @@ var merge = function() {
         form ? form.pipe(req) : opts.data && req.write(JSON.stringify(opts.data)), req.end();
     };
     return "undefined" != typeof XMLHttpRequest ? xhr : http;
-}(), request, image, _url, reach = function(uri, options, callback) {
+}(), request, image, _url, reach = function(uri, options, done) {
     if (!_url) throw new Error("set the url for reach with reachjs.setUrl('')");
     if ("undefined" == typeof uri) throw new Error("undefined is not a valid uri or options object.");
     if (!reach.key && options.qs && !options.qs.access_token) throw new Error("reach.key or token is required");
-    "function" == typeof options && (callback = options), "object" == typeof options ? options.uri = uri : options = "string" == typeof uri ? {
+    "function" == typeof options && (done = options), "object" == typeof options ? options.uri = uri : options = "string" == typeof uri ? {
         uri: uri
     } : uri, "/" === options.uri.substr(0, 1) && (options.uri = options.uri.substr(1)), 
     options = formatData(options), uri = _url + options.uri, delete options.uri;
     var qs = filter({}, options);
     return options.qs || (options.qs = {}), qs && (options.qs.filter = qs), !options.headers && (options.headers = {}), 
     reach.key && (options.headers["X-Helios-ID"] = reach.key), options.headers["Content-Type"] || (options.headers["Content-Type"] = "application/json"), 
-    new request(uri, options, callback);
+    new request(uri, options, done);
 };
 
 reach.key = null, reach.get = verbFunc("GET"), reach.post = verbFunc("POST"), reach.put = verbFunc("PUT"), 

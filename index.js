@@ -9,10 +9,10 @@ var _url;
  * @param {string} options.uri
  * @param {object} options.headers
  * @param {string} options.qs
- * @callback callback
+ * @callback done
  * @returns {*}
  */
-var reach = function(uri, options, callback) {// jshint ignore:line
+var reach = function(uri, options, done) {// jshint ignore:line
 
   if( !_url )
     throw new Error("set the url for reach with reachjs.setUrl('')");
@@ -24,7 +24,7 @@ var reach = function(uri, options, callback) {// jshint ignore:line
     throw new Error("reach.key or token is required");
 
   if( typeof options === "function" )
-    callback = options;
+    done = options;
 
   if (typeof options === "object")
     options.uri = uri;
@@ -51,7 +51,7 @@ var reach = function(uri, options, callback) {// jshint ignore:line
   if( !options.headers["Content-Type"] )
     options.headers["Content-Type"] = "application/json";
 
-  return new request(uri, options, callback);
+  return new request(uri, options, done);
 };
 /**
  * Format request options data
@@ -107,10 +107,10 @@ function filter(filter, options){
  */
 function verbFunc (method) {
 
-  return function (uri, options, callback) {
+  return function (uri, options, done) {
 
     if( typeof options === "function"  ){
-      callback = options;
+      done = options;
       options = {};
     }
     if( typeof uri === "object" )
@@ -118,7 +118,7 @@ function verbFunc (method) {
     else
       options.method = method;
     
-    return reach(uri, options, callback);
+    return reach(uri, options, done);
   };
 }
 
@@ -132,27 +132,32 @@ reach.image = image;
 reach.upload = upload;
 
 
-function upload(path, data, callback){
+function upload(activationId, data, options, done){
+
+  if( typeof options === "function" ){
+    done = options;
+    options = {};
+  }
 
   if( data[0] )
     data = data.map(function(obj){
-      obj.path = path + obj.name;
+      obj.path = obj.name;
       return obj;
     });
   else
-    data.path = path + data.name;
+    data.path = data.name;
 
-  // image - canvas, <img/>, <input/>
-  if( path.substr(0, 1) === "/" )
-    path = path.substr(1);
-  
-  reach("containers/reachdata/upload", {
+  reach("files/upload/"+activationId, {
     method : "POST",
+    qs : {
+      options: JSON.stringify(options)
+    },
     headers : {
       "Content-Type" : "multipart/form-data"
     },
     data : data
-  }, callback);
+  }, done);
+
 }
 reach.development = function(){
   console.error("reach.development is no longer supported. Set the url explicitly with reach.setUrl()");

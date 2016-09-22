@@ -7,7 +7,7 @@ Perform common actions with the Loopback API in Node and the browser.
 Node / Commonjs
 
 ```
-npm install git+https://github.com/HeliosInteractive/reachjs.git#v2.1.1 --save
+npm install git+https://github.com/HeliosInteractive/reachjs.git#v3.0.0 --save
 ```
 
 Helios uses a custom header for authentication. You can also pass in an access token in the request query string for
@@ -52,6 +52,223 @@ import { reach } from 'reachjs';
 reach.setUrl("");
 reach.key = "";
 ```
+
+# Properties
+
+### Key
+
+Set the key (api or public) for authenticating requests.
+
+_usage_
+```
+reach.key = "some_api_key";
+```
+
+> This key is used for all requests
+
+# Methods
+
+### get
+
+Makes a get request to an endpoint with options and a callback
+
+**parameters**
+
+uri {string} the endpoint to request
+options {object} optional parameters /filters @see [options](#options)
+done {function} called with err, res prameters @see [done](#done)
+
+_usage_
+```
+// get 1 guest
+reach.get("guests", {limit:1}, function reqListener (err, res) {
+  res.body.length.should.eql(1);
+});
+
+// get a guest by id
+reach.get(`guests/${id}`, function reqListener (err, res) {
+  res.body.name.should.eql("Michael");
+});
+```
+
+### post
+
+Makes a postt request to an endpoint with options and a callback
+
+**parameters**
+
+uri {string} the endpoint to request
+options {object} optional parameters /filters @see [options](#options)
+done {function} called with err, res prameters @see [done](#done)
+
+_usage_
+```
+// create a guest
+reach.post("guests", {name: "Test", email : "fakeemail@fake.com"}, function reqListener (err, res) {
+  res.body.email.should.eql("fakeemail@fake.com");
+});
+```
+
+### put
+
+Makes a put request to an endpoint with options and a callback
+
+**parameters**
+
+uri {string} the endpoint to request
+options {object} optional parameters /filters @see [options](#options)
+done {callback} called with err, res prameters @see [done](#done)
+
+_usage_
+```
+// update a guest
+reach.put("guests", {id:"guestId", name: "Test Test"}, function reqListener (err, res) {
+  res.body.email.should.eql("fakeemail@fake.com");
+});
+```
+
+### setUrl
+
+Sets the base URL for Reach.
+
+_usage_
+```
+reach.setUrl("http://localhost/api");
+```
+
+> This url is used for all requests
+
+### upload
+
+Uploads a file
+
+**parameters**
+
+activation {string} an activation id
+data {object} form data object returned from reach.image
+options {object} addtional options for files
+done {callback} called with err, res prameters @see [done](#done)
+
+_usage_
+```
+// upload a file and specify an event. private : false is the default
+reach.upload("activationId", data, {private: false, eventId: "someid"}, function(err, res){
+});
+// upload a signature to a private bucket for security
+reach.upload("activationId", data, {private: true}, function(err, res){
+});
+```
+
+# Other methods
+
+### image
+
+Reach helps you convert file data to images to upload. You can create file objects from <canvas/>, <img/>, <input type="file"/>, and fs.readFile.
+
+_example usage_
+```
+var image = document.getElementById("myImage");
+reach.image.fromImage(image, function(err, data){
+    reach.upload("activationId", data, function(err, res){});
+});
+```
+
+**fromCanvas**
+
+canvas {Canvas} HTML canvas element
+options {object}
+ - quality {integer} (0-1)
+ - type {string} "image/png", "image/jpeg", "image/gif"
+
+done {function} err, data
+
+**fromImage**
+
+image {Image} HTMl Image element
+options {object}
+ - quality {integer} (0-1)
+ - type {string} "image/png", "image/jpeg", "image/gif"
+
+done {function} err, data
+
+**fromFileInput**
+
+file {FileInput} HTML file imput element
+done {function} err, data
+
+**fromLocalPath**
+
+file {string} path to file on on disk (nodejs only)
+done {function} err, data
+
+**fromBuffer**
+
+buffer {Buffer} Buffer object
+name {string} filename.extension
+done {function} err, data
+
+### request
+
+Underlying call to the request object. Must make a new request object for each call. You can make a request to any url with this method. Reach client wraps this exposed method.
+
+uri {string} The full uri to request
+opts {object} Options object
+ - data : request data to use in the body of the request
+ - qs : serializable query string data or a string
+ - method : request method
+ - headers : request headers
+
+done {function} called with err, res prameters @see [done](#done)
+
+```
+new reach.request("http://localhost", {}, (err, res) => {});
+```
+
+---
+
+# Notes
+
+### Options
+
+All requests accept an options object. The properties of this object are
+
+ - data : request data to use in the body of the request
+ - qs : serializable query string data or a string
+ - method : request method
+ - headers : request headers
+
+If you are only setting the data property you may omit it. The following are equivelant.
+```
+{id:"1", name:"Michael", random:"value", boolean: true}
+{data: {id:"1", name:"Michael", random:"value", boolean: true} }
+```
+
+As long as your payload does not need to set one of the reserved properties you may omit the data property. For example the following are equivelant.
+```
+{id:"1", name:"Michael", random:"value", boolean: true, qs: {test:true}}
+{data: {id:"1", name:"Michael", random:"value", boolean: true}, qs: {test:true} }
+```
+
+However, if you payload needs to specify a reserved property you need to place it inside the data object. In the following case test:true will be set as query string parameters while "ok":"ok" will be in the request body.
+```
+{data: {id:"1", name:"Michael", random:"value", boolean: true, qs: {"ok":"ok"}}, qs: {test:true} }
+```
+
+### Done
+
+All requests expect an error first callback as the last argument. The error is reserved for network issues. For example, if there is no internet you may recieve an error object with `E_CONNREFUSED`. The response object is the parsable json response from the server. If you make a bad request you will receive no error object, but the response will contain a status of 401 and a body with additional data.
+
+Do not assume that because no error was returned that your request was ok.
+
+**The response object**
+ - body {object} the response body parsed
+ - headers {object} the response headers
+ - status {integer} the response code
+ - url {string} the full url of the request
+
+Inspecting the response object will help you debug your requests. You should always verify a 200 level response from your request. Anything other than that is likely an error with your request. Inspect the response for details.
+
+---
 
 
 # Common Usage
