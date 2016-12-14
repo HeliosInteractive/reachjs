@@ -1,4 +1,4 @@
-/*Reach Client ES6 Module v3.0.0*/
+/*Reach Client ES6 Module v3.0.1*/
 export var reach = (function() {
  "use strict";
 
@@ -276,7 +276,8 @@ var merge = function() {
     options = formatData(options), uri = _url + options.uri, delete options.uri;
     var qs = filter({}, options);
     return options.qs || (options.qs = {}), qs && (options.qs.filter = qs), !options.headers && (options.headers = {}), 
-    reach.key && (options.headers["X-Helios-ID"] = reach.key), options.headers["Content-Type"] || (options.headers["Content-Type"] = "application/json"), 
+    reach.key && !options.headers["X-Helios-ID"] && (options.headers["X-Helios-ID"] = reach.key), 
+    options.headers["Content-Type"] || (options.headers["Content-Type"] = "application/json"), 
     new request(uri, options, done);
 };
 

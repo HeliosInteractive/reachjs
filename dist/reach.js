@@ -1,4 +1,4 @@
-/*Reach Client v3.0.0*/
+/*Reach Client v3.0.1*/
 (function(factory) {
     
     // Establish the root object, window (self) in the browser, or global on the server.
@@ -301,7 +301,8 @@ var merge = function() {
     options = formatData(options), uri = _url + options.uri, delete options.uri;
     var qs = filter({}, options);
     return options.qs || (options.qs = {}), qs && (options.qs.filter = qs), !options.headers && (options.headers = {}), 
-    reach.key && (options.headers["X-Helios-ID"] = reach.key), options.headers["Content-Type"] || (options.headers["Content-Type"] = "application/json"), 
+    reach.key && !options.headers["X-Helios-ID"] && (options.headers["X-Helios-ID"] = reach.key), 
+    options.headers["Content-Type"] || (options.headers["Content-Type"] = "application/json"), 
     new request(uri, options, done);
 };
 

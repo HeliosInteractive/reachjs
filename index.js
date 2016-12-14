@@ -46,7 +46,7 @@ var reach = function(uri, options, done) {// jshint ignore:line
   if( qs ) options.qs.filter = qs;
 
   !options.headers && (options.headers = {});
-  if( reach.key ) options.headers["X-Helios-ID"] = reach.key;
+  if( reach.key && !options.headers["X-Helios-ID"] ) options.headers["X-Helios-ID"] = reach.key;
 
   if( !options.headers["Content-Type"] )
     options.headers["Content-Type"] = "application/json";
