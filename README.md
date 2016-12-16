@@ -152,10 +152,10 @@ Uploads a file
 _usage_
 ```
 // upload a file and specify an event. private : false is the default
-reach.upload("activationId", data, {private: false, eventId: "someid"}, function(err, res){
+reach.upload("{activationId}", data, {private: false, eventId: "someid"}, function(err, res){
 });
 // upload a signature to a private bucket for security
-reach.upload("activationId", data, {private: true}, function(err, res){
+reach.upload("{activationId}", data, {private: true}, function(err, res){
 });
 ```
 
@@ -169,7 +169,7 @@ _example usage_
 ```
 var image = document.getElementById("myImage");
 reach.image.fromImage(image, function(err, data){
-    reach.upload("activationId", data, function(err, res){});
+    reach.upload("{activationId}", data, function(err, res){});
 });
 ```
 
@@ -318,7 +318,7 @@ Upload a photo - 4 ways to handle this with the client
 var canvas = document.getElementById("canvas-element-id");
 reach.image.fromCanvas(canvas, function(err, data){
 
-  reach.upload("test/reachjs/", data, function(err, res){
+  reach.upload("{activationId}", data, function(err, res){
     console.log(err, res.body.result.files);
   });
 });
@@ -327,7 +327,7 @@ reach.image.fromCanvas(canvas, function(err, data){
 var image = document.getElementById("myImage");
 reach.image.fromImage(image, function(err, data){
 
-  reach.upload("test/reachjs/", data, function(err, res){
+  reach.upload("{activationId}", data, function(err, res){
     console.log(err, res.body.result.files);
   });
 });
@@ -335,7 +335,7 @@ reach.image.fromImage(image, function(err, data){
 // from a local file (Node only)
 reach.image.fromLocalPath(require("path").join(__dirname, "reach.png"), function(err, data){
 
-  reach.upload("test/reachjs/", data, function(err, res){
+  reach.upload("{activationId}", data, function(err, res){
     console.log(err, res.body.result.files);
   });
 });
@@ -345,7 +345,7 @@ reach.image.fromLocalPath(require("path").join(__dirname, "reach.png"), function
 var file = new File([new Blob([""], {type : "image/png"})], "cat.png");
 reach.image.fromFileInput(file, function (err, data) {
 
-  reach.upload("test/reachjs/", data, function (err, res) {
+  reach.upload("{activationId}", data, function (err, res) {
     console.log(err, res.body.result.files);
   });
 });
@@ -355,7 +355,7 @@ reach.image.fromFileInput(file, function (err, data) {
 var file = document.getElementById("my-file-input");
 reach.image.fromFileInput(file, function (err, data) {
 
-  reach.upload("test/reachjs/", data, function (err, res) {
+  reach.upload("{activationId}", data, function (err, res) {
     console.log(err, res.body.result.files);
   });
 });
@@ -369,7 +369,7 @@ var data =  {
   type: "image/gif",
   data: [new Blob([""], {type : "image/gif"})] // any binary array, Buffer, Blob
 }
-reach.upload("test/reachjs/", data, function (err, res) {
+reach.upload("{activationId}", data, function (err, res) {
   console.log(err, res.body.result.files);
 });
 ```
@@ -391,14 +391,14 @@ Attach a file to an experience
 var canvas = document.getElementById("canvas-element-id"); // first upload from canvas
 reach.image.fromCanvas(canvas, function(err, data){
 
-  reach.upload("test/reachjs/", data, function(err, res){
+  reach.upload("{activationId}", data, function(err, res){
 
     var exp = {
       "type":"reach_test",
       "activationId":"123",
       "eventId":"456",
       "photos" : [{
-        "imagePath" : res.body.result.files.file[0].name
+        "id" : res.body.result.files.file[0].id
       }]
     };
     reach.post("experiences", exp, function (err, res) {
