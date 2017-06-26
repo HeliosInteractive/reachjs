@@ -1,17 +1,17 @@
 {
-  "name": "reachjs",
+  "name": "@helios-interactive/reachjs",
   "description": "Helios Reach API Javascript Client",
   "version": "3.0.1",
   "engines": {
     "node": "5.4.0",
     "npm": "3.3.12"
   },
-  "homepage": "https://github.com/beeman/loopback-angular-admin",
+  "homepage": "http://heliosinteractive.com/",
   "author": "Michael Neil <michael.neil@heliosinteractive.com>",
   "license": "MIT",
   "repository": {
     "type": "git",
-    "url": "https://github.com/beeman/loopback-angular-admin"
+    "url": "https://github.com/HeliosInteractive/reachjs"
   },
   "scripts": {
     "build": "grunt build"
