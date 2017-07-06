@@ -1,7 +1,7 @@
-"use strict";
+import request from './request';
+import image from './image';
+let _url;
 
-var request, image;
-var _url;
 /**
  * Make HTTP requests to reach
  * @param {string|options} uri

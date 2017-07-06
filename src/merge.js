@@ -1,7 +1,4 @@
-var merge = (function(){// jshint ignore:line
-
-  "use_strict";
-
+const merge = (() => { // jshint ignore:line
   /*!
    * @name JavaScript/NodeJS Merge v1.2.0
    * @author yeikos
@@ -10,16 +7,46 @@ var merge = (function(){// jshint ignore:line
    * https://raw.github.com/yeikos/js.merge/master/LICENSE
    */
   /**
+   * Merge two or more objects
+   * @param bool clone
+   * @param bool recursive
+   * @param array argv
+   * @return object
+   */
+  function merge(clone, recursive, argv) {
+    const result = argv[0];
+    const size = argv.length;
+
+    if (clone || typeOf(result) !== 'object'){
+      result = {};
+    }
+    for (let index = 0; index < size; index += 1) {
+
+      var item = argv[index],
+
+          type = typeOf(item);
+
+      if (type !== 'object') continue;
+
+      for (var key in item) {
+        var sitem = clone ? Public.clone(item[key]) : item[key];
+        if (recursive) {
+          result[key] = merge_recursive(result[key], sitem);
+        } else {
+          result[key] = sitem;
+        }
+      }
+    }
+    return result;
+  }
+  /**
    * Merge one or more objects
    * @param bool? clone
    * @param mixed,... arguments
    * @return object
    */
-
-  var Public = function(clone) {
-
+  const Public = function (clone) {
     return merge(clone === true, false, arguments);
-
   };
 
   /**
@@ -47,7 +74,7 @@ var merge = (function(){// jshint ignore:line
         type = typeOf(input),
         index, size;
 
-    if (type === "array") {
+    if (type === 'array') {
 
       output = [];
       size = input.length;
@@ -56,7 +83,7 @@ var merge = (function(){// jshint ignore:line
 
         output[index] = Public.clone(input[index]);
 
-    } else if (type === "object") {
+    } else if (type === 'object') {
 
       output = {};
 
@@ -79,13 +106,13 @@ var merge = (function(){// jshint ignore:line
 
   function merge_recursive(base, extend) {
 
-    if (typeOf(base) !== "object")
+    if (typeOf(base) !== 'object')
 
       return extend;
 
     for (var key in extend) {
 
-      if (typeOf(base[key]) === "object" && typeOf(extend[key]) === "object") {
+      if (typeOf(base[key]) === 'object' && typeOf(extend[key]) === 'object') {
 
         base[key] = merge_recursive(base[key], extend[key]);
 
@@ -100,54 +127,6 @@ var merge = (function(){// jshint ignore:line
     return base;
 
   }
-
-  /**
-   * Merge two or more objects
-   * @param bool clone
-   * @param bool recursive
-   * @param array argv
-   * @return object
-   */
-
-  function merge(clone, recursive, argv) {
-
-    var result = argv[0],
-        size = argv.length;
-
-    if (clone || typeOf(result) !== "object")
-
-      result = {};
-
-    for (var index=0;index<size;++index) {
-
-      var item = argv[index],
-
-          type = typeOf(item);
-
-      if (type !== "object") continue;
-
-      for (var key in item) {
-
-        var sitem = clone ? Public.clone(item[key]) : item[key];
-
-        if (recursive) {
-
-          result[key] = merge_recursive(result[key], sitem);
-
-        } else {
-
-          result[key] = sitem;
-
-        }
-
-      }
-
-    }
-
-    return result;
-
-  }
-
   /**
    * Get type of variable
    * @param mixed input
@@ -164,9 +143,5 @@ var merge = (function(){// jshint ignore:line
 
   return Public;
 })();
-/*
 
-if( typeof module !== "undefined" && module.exports )
-  module.exports = Public; // node
-else
-  exports.merge = Public;*/
+export default merge;

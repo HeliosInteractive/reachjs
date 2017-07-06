@@ -1,10 +1,10 @@
 {
   "name": "@helios-interactive/reachjs",
   "description": "Helios Reach API Javascript Client",
-  "version": "3.0.1",
+  "version": "3.1.0",
   "engines": {
-    "node": "5.4.0",
-    "npm": "3.3.12"
+    "node": "8.1.2",
+    "npm": "5.0.3"
   },
   "homepage": "http://heliosinteractive.com/",
   "author": "Michael Neil <michael.neil@heliosinteractive.com>",
@@ -17,18 +17,14 @@
     "build": "grunt build"
   },
   "main": "dist/reach.js",
-  "jsnext:main": "dist/reach.module.js",
-  "dependencies": {
-    "form-data": "git+https://github.com/mneil/form-data"
-  },
+  "jsnext:main": "src/index.js",
   "devDependencies": {
-    "grunt": "^0.4.5",
-    "grunt-contrib-connect": "^1.0.0",
-    "grunt-contrib-jshint": "^1.0.0",
-    "grunt-contrib-uglify": "^1.0.0",
-    "grunt-contrib-watch": "^0.6.1",
-    "grunt-mocha-test": "^0.12.7",
-    "load-grunt-tasks": "^3.4.1",
+    "babel-loader": "^7.1.1",
+    "eslint": "^3.19.0",
+    "eslint-config-airbnb-base": "^11.2.0",
+    "eslint-plugin-import": "^2.6.1",
+    "form-data": "git+https://github.com/mneil/form-data",
+    "webpack": "^3.0.0",
     "mocha": "^2.4.5",
     "should": "^8.2.2"
   }
