@@ -1,29 +1,41 @@
+const childProcess = require('child_process');
 const webpack = require('webpack');
+
 const env = process.env.WEBPACK_ENV || 'dev';
 const name = 'reach';
-
-let options = {
+const umd = {
   entry: './src/index.js',
   output: {
     filename: `dist/${name}.min.js`,
-    library: 'Babbler',
+    library: name,
     libraryTarget: 'umd',
-    umdNamedDefine: true
+    umdNamedDefine: true,
   },
   module: {
     loaders: [
       {
         test: /(\.jsx|\.js)$/,
         loader: 'babel-loader',
-        exclude: /(node_modules|bower_components)/
-      }
-    ]
+        exclude: /(node_modules|bower_components)/,
+      },
+    ],
   },
-  plugins: []
+  node: {
+    Buffer: false,
+  },
+  externals: [
+    {
+      fs: 'commonjs fs', // a is not external
+      https: 'commonjs https',
+      http: 'commonjs http',
+      url: 'commonjs url',
+      'form-data': 'commonjs form-data',
+    },
+  ],
+  plugins: [],
 };
-
-if( env !== 'dev' ){
-  options.plugins.unshift(new webpack.optimize.UglifyJsPlugin({
+if (env !== 'dev') {
+  umd.plugins.unshift(new webpack.optimize.UglifyJsPlugin({
     compress: {
       warnings: false,
     },
@@ -32,11 +44,9 @@ if( env !== 'dev' ){
     },
   }));
 }
-
-if( env === 'dev' ){
-  require('child_process').exec('npm run test', function(error, stdout, stderr) {
+if (env === 'dev') {
+  childProcess.exec('npm run test', (error, stdout, stderr) => {
     console.log(error || stdout || stderr);
   });
 }
-
-module.exports = options;
+module.exports = umd;

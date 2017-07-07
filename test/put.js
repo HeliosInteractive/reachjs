@@ -6,12 +6,12 @@ try{
 }catch(e){
   should = require('should');
   //reach = require('../index.js');
-  reach = require('../dist/reach.js');
+  reach = require('../dist/reach.min.js');
   fs = require('fs');
   require('./config.js')(reach);
 }
 
-reach.development(true);
+reach.setUrl("http://reachstaging.herokuapp.com/api/");
 reach.key = "helios_test";
 
 describe('Reach PUT', function() {

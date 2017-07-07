@@ -1,4 +1,6 @@
-const request = (() => {
+import merge from 'merge';
+
+const Request = (() => {
   /**
    * Noop for catch
    */
@@ -11,7 +13,7 @@ const request = (() => {
    * @returns {FormData|exports|module.exports}
    */
   function getForm(data) {
-    const FormData = require('form-data');
+    const FormData = require('form-data'); // eslint-disable-line global-require
     const form = new FormData();
     form.append('file', data.data, {
       filename: data.path,
@@ -30,7 +32,7 @@ const request = (() => {
     if (typeof obj === 'string') return `?${obj}`;
 
     function toParam(a, k) {
-      a.push(`k=${encodeURIComponent(obj[k])}`);
+      a.push(`${k}=${encodeURIComponent(obj[k])}`);
       return a;
     }
 
@@ -65,50 +67,51 @@ const request = (() => {
    * @param opts
    * @callback done
    */
-  const xhr = function (base, opts, done) {
+  const xhr = function xhr(base, opts, done) {
     this.oReq = new XMLHttpRequest();
 
-    const uri = `${base}${querystring(opts.qs)}`;
+    const options = merge(opts);
+    const uri = `${base}${querystring(options.qs)}`;
 
     function xhrError(err) {
       // TODO: standardize error format
       done(err);
     }
 
-    function xhrResponse(res) {
+    const xhrResponse = (res) => {
       const response = {
         body: res.target.response,
         status: res.target.status,
         url: res.target.responseURL,
-        headers: parseHeaders(self.oReq.getAllResponseHeaders()),
+        headers: parseHeaders(this.oReq.getAllResponseHeaders()),
       };
 
       try {
         const body = JSON.parse(res.target.response);
         response.body = body;
-      } catch (e) { console.warn(e); }
+      } catch (e) { noop(); }
 
       done(null, response);
-    }
+    };
 
     this.oReq.addEventListener('load', xhrResponse);
     this.oReq.addEventListener('error', xhrError);
-    this.oReq.open((opts.method && opts.method.toUpperCase()) || 'GET', uri, true);
+    this.oReq.open((options.method && options.method.toUpperCase()) || 'GET', uri, true);
 
     let data = null;
 
-    if (opts.data) {
-      if (opts.headers && opts.headers['Content-Type'] === 'multipart/form-data') {
+    if (options.data) {
+      if (options.headers && options.headers['Content-Type'] === 'multipart/form-data') {
         data = new FormData();
-        data.append('file', opts.data.data, opts.data.path);
-        delete opts.headers['Content-Type'];
+        data.append('file', options.data.data, options.data.path);
+        delete options.headers['Content-Type'];
       } else {
-        data = JSON.stringify(opts.data);
+        data = JSON.stringify(options.data);
       }
     }
 
-    if (opts.headers && typeof opts.headers === 'object') {
-      Object.keys(opts.headers).forEach(this.setHeaders.bind(this, opts.headers));
+    if (options.headers && typeof options.headers === 'object') {
+      Object.keys(options.headers).forEach(this.setHeaders.bind(this, options.headers));
     }
 
     this.oReq.send(data);
@@ -118,7 +121,7 @@ const request = (() => {
    * @param headers
    * @param key
    */
-  xhr.prototype.setHeaders = function(headers, key){
+  xhr.prototype.setHeaders = function setHeaders(headers, key) {
     this.oReq.setRequestHeader(key, headers[key]);
   };
   /**
@@ -126,11 +129,16 @@ const request = (() => {
    * @param opts
    * @callback done
    */
-  const http = function (base, opts, done) {
-    const url = require('url');
+  const http = function http(base, opts, done) {
+    const url = require('url'); // eslint-disable-line global-require
     const uri = `${base}${querystring(opts.qs)}`;
     const parsed = url.parse(uri, true, true);
-    const httpMod = require(parsed.protocol === 'https:' ? 'https' : 'http');
+    let httpMod;
+    if (parsed.protocol === 'https:') {
+      httpMod = require('https');// eslint-disable-line global-require
+    } else {
+      httpMod = require('http');// eslint-disable-line global-require
+    }
 
     const reqOptions = {
       host: parsed.hostname,
@@ -167,7 +175,7 @@ const request = (() => {
     }
 
     function httpError(err) {
-      // TODO: coerce error to starndard format
+      // TODO: coerce error to standard format
       done(err);
     }
 
@@ -194,4 +202,4 @@ const request = (() => {
   return http;
 })();
 
-export default request;
+export default Request;

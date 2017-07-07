@@ -3,7 +3,6 @@ const image = (() => { // jshint ignore:line
   let perf = false;
 
   function noop() {
-
   }
 
   try {
@@ -29,8 +28,7 @@ const image = (() => { // jshint ignore:line
   try { // for node webkit
     if (!HTMLCanvasElement.prototype.toBlob) {
       Object.defineProperty(HTMLCanvasElement.prototype, 'toBlob', {
-        value: function (done, type, quality) {
-
+        value(done, type, quality) {
           const binStr = atob(this.toDataURL(type, quality).split(',')[1]);
           const len = binStr.length;
           const arr = new Uint8Array(len);
@@ -60,7 +58,7 @@ const image = (() => { // jshint ignore:line
     return 'xxxxxxxx-xxxx-4xxx-yxxx-xxxxxxxxxxxx'.replace(/[xy]/g, (c) => {
       const r = (d + (Math.random() * 16)) % 16 | 0;
       d = Math.floor(d / 16);
-      return (c === 'x' ? r : (r & 0x3 | 0x8)).toString(16);
+      return (c === 'x' ? r : ((r & 0x3) | 0x8)).toString(16);
     });
   }
   /**
@@ -96,11 +94,13 @@ const image = (() => { // jshint ignore:line
   /**
    * Get image buffer from html <canvas/> element
    * @param {object} canvas `document.getElementByTagName("canvas')[0];`
-   * @param {object} options image options like mimetype and compression
-   * @callback done
+   * @param {object} data image options like mimetype and compression
+   * @callback callback
    * @return {Buffer}
    */
-  Image.fromCanvas = function (canvas, options, done) {
+  Image.fromCanvas = function fromCanvas(canvas, data, callback) {
+    let done = callback;
+    let options = data;
     if (typeof options === 'function') {
       done = options;
       options = 'image/png';
@@ -119,15 +119,17 @@ const image = (() => { // jshint ignore:line
   /**
    * Get image buffer from html <img/> element
    * @param {object} img `document.getElementByTagName('img')[0];`
-   * @param {object} options image options like mimetype and compression
-   * @callback done
+   * @param {object} data image options like mimetype and compression
+   * @callback callback
    * @return {Buffer}
    */
-  Image.fromImage = function (img, options, done) {
+  Image.fromImage = function fromImage(img, data, callback) {
     const extension = `.${img.src.split('.').pop()}`;
-
+    let done = callback;
+    let options = data;
     if (typeof options === 'function') {
-      done = options, options = {
+      done = options;
+      options = {
         type: Image.supportedMimeTypes[extension],
         quality: 1,
       };
@@ -155,7 +157,7 @@ const image = (() => { // jshint ignore:line
    * @param {Buffer} data
    * @returns {*}
    */
-  Image.fromFileInput = function (file, done) {
+  Image.fromFileInput = function fromFileInput(file, done) {
     Image.fromBuffer(file, file.name, done);
     return file;
   };
@@ -167,9 +169,9 @@ const image = (() => { // jshint ignore:line
    * @param {Buffer} data
    * @returns {*}
    */
-  Image.fromLocalPath = function (path, done) {
+  Image.fromLocalPath = function fromLocalPath(path, done) {
     try {
-      require('fs').readFile(path, (err, data) => {
+      require('fs').readFile(path, (err, data) => { // eslint-disable-line global-require
         Image.fromBuffer(data, path, done);
       });
     } catch (e) {
@@ -184,7 +186,7 @@ const image = (() => { // jshint ignore:line
    * @param {string} path full path to file `path/to/folder`
    * @callback done
    */
-  Image.fromBuffer = function (buffer, path, done) {
+  Image.fromBuffer = function fromBuffer(buffer, path, done) {
     setTimeout(() => {
       const extension = `.${path.split('.').pop()}`;
       done(null, buffer && {
