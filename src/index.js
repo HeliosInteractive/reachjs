@@ -161,6 +161,33 @@ function verbFunc(method) {
   };
 }
 
+/**
+ * Get today's event or the next available event
+ * @param activation
+ * @param done
+ */
+function currentEvent(activation, done) {
+  if (!activation) {
+    done(new Error('activation required'));
+    return;
+  }
+  const now = new Date();
+  reach.get('events', {
+    where: {
+      startDate: {
+        lt: now.toUTCString(),
+      },
+      endDate: {
+        gt: now.toUTCString(),
+      },
+      activationId: activation,
+    },
+    sort: {
+      startDate: 'ASC',
+    },
+  }, done);
+}
+
 function upload(activationId, file, args, callback) {
   let data = file;
   let options = args;
@@ -200,6 +227,7 @@ reach.del = verbFunc('DELETE');
 reach.request = Request;
 reach.image = image;
 reach.upload = upload;
+reach.currentEvent = currentEvent;
 
 reach.development = function reachDevelopment() {
   throw new Error('reach.development is no longer supported. Set the url explicitly with reach.setUrl()');
