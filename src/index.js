@@ -208,10 +208,10 @@ reach.development = function reachDevelopment() {
 // set your endpoint
 reach.setUrl = function reachSetUrl(uri) {
   let url = uri;
-  if (uri.substr(-1) !== '/') {
+  if (url.substr(-1) !== '/') {
     url = `${url}/`;
   }
-  if (uri.substr(-4) !== 'api/') {
+  if (url.substr(-4) !== 'api/') {
     url = `${url}api/`;
   }
   if (url) {

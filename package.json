@@ -1,7 +1,7 @@
 {
   "name": "@helios-interactive/reachjs",
   "description": "Helios Reach API Javascript Client",
-  "version": "4.0.0",
+  "version": "5.0.0",
   "engines": {
     "node": "8.1.2",
     "npm": "5.0.3"
