@@ -128,7 +128,10 @@ const reach = function reach(url, data, callback) {
   if (!options.headers) {
     options.headers = {};
   }
-  if (reach.key && !options.headers['X-Helios-ID']) {
+  // If the key exists and we didn't explicitly pass an access token
+  // or override the helios id then set it. This lets us authenticate
+  // manually per request by setting access_token or x-helios-id
+  if (reach.key && !options.headers['X-Helios-ID'] && !options.qs.access_token) {
     options.headers['X-Helios-ID'] = reach.key;
   }
 

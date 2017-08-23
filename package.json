@@ -14,7 +14,7 @@
     "url": "https://github.com/HeliosInteractive/reachjs"
   },
   "scripts": {
-    "build": "npm run lint && webpack",
+    "build": "npm run lint && webpack -p",
     "dev": "webpack --progress --colors --watch",
     "test": "mocha -R spec test/index.js && static -p 8000",
     "lint": "eslint src"
