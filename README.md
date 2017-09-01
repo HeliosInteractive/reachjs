@@ -7,7 +7,7 @@ Perform common actions with the Loopback API in Node and the browser.
 Node / Commonjs
 
 ```
-npm install git+https://github.com/HeliosInteractive/reachjs.git#v3.0.0 --save
+npm install @helios-interactive/reachjs --save
 ```
 
 Helios uses a custom header for authentication. You can also pass in an access token in the request query string for
@@ -47,7 +47,7 @@ define(['reach'], function (reach) {
 
 Module
 ```
-import { reach } from 'reachjs';
+import reach from '@helios-interactive/reachjs';
 
 reach.setUrl("");
 reach.key = "";
