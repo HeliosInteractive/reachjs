@@ -7,17 +7,17 @@ Perform common actions with the Loopback API in Node and the browser.
 Node / Commonjs
 
 ```
-npm install git+https://github.com/HeliosInteractive/reachjs.git#v3.0.0 --save
+npm install @helios-interactive/reachjs --save
 ```
 
 Helios uses a custom header for authentication. You can also pass in an access token in the request query string for
 loopback apps.
 
 ```
-var reach = require("reach");
-reach.setUrl("");
-reach.key = "";
-reach.get("guests", function(err, res){
+var reach = require('reach');
+reach.setUrl('');
+reach.key = '';
+reach.get('guests', function(err, res){
   console.log(err, res);
 });
 ```
@@ -29,9 +29,9 @@ Browser
 ```
 <script src="./dist/reach.min.js"></script>
 <script>
-  reach.setUrl("");
-  reach.key = "";
-  reach.get("guests", function (err, res) {
+  reach.setUrl('');
+  reach.key = '';
+  reach.get('guests', function (err, res) {
     console.log(err, res);
   });
 </script>
@@ -40,8 +40,8 @@ Browser
 AMD
 ```
 define(['reach'], function (reach) {
-  reach.setUrl("");
-  reach.key = "";
+  reach.setUrl('');
+  reach.key = '';
 });
 ```
 
@@ -49,8 +49,8 @@ Module
 ```
 import { reach } from 'reachjs';
 
-reach.setUrl("");
-reach.key = "";
+reach.setUrl('');
+reach.key = '';
 ```
 
 # Properties
@@ -61,7 +61,7 @@ Set the key (api or public) for authenticating requests.
 
 _usage_
 ```
-reach.key = "some_api_key";
+reach.key = 'some_api_key';
 ```
 
 > This key is used for all requests
@@ -81,13 +81,13 @@ Makes a get request to an endpoint with options and a callback
 _usage_
 ```
 // get 1 guest
-reach.get("guests", {limit:1}, function reqListener (err, res) {
+reach.get('guests', {limit:1}, function reqListener (err, res) {
   res.body.length.should.eql(1);
 });
 
 // get a guest by id
 reach.get(`guests/${id}`, function reqListener (err, res) {
-  res.body.name.should.eql("Michael");
+  res.body.name.should.eql('Michael');
 });
 ```
 
@@ -104,8 +104,8 @@ Makes a postt request to an endpoint with options and a callback
 _usage_
 ```
 // create a guest
-reach.post("guests", {name: "Test", email : "fakeemail@fake.com"}, function reqListener (err, res) {
-  res.body.email.should.eql("fakeemail@fake.com");
+reach.post('guests', {name: 'Test', email : 'fakeemail@fake.com'}, function reqListener (err, res) {
+  res.body.email.should.eql('fakeemail@fake.com');
 });
 ```
 
@@ -122,8 +122,8 @@ Makes a put request to an endpoint with options and a callback
 _usage_
 ```
 // update a guest
-reach.put("guests", {id:"guestId", name: "Test Test"}, function reqListener (err, res) {
-  res.body.email.should.eql("fakeemail@fake.com");
+reach.put('guests', {id:'guestId', name: 'Test Test'}, function reqListener (err, res) {
+  res.body.email.should.eql('fakeemail@fake.com');
 });
 ```
 
@@ -133,7 +133,7 @@ Sets the base URL for Reach.
 
 _usage_
 ```
-reach.setUrl("http://localhost/api");
+reach.setUrl('http://localhost/api');
 ```
 
 > This url is used for all requests
@@ -152,10 +152,10 @@ Uploads a file
 _usage_
 ```
 // upload a file and specify an event. private : false is the default
-reach.upload("{activationId}", data, {private: false, eventId: "someid"}, function(err, res){
+reach.upload(`${activationId}`, data, {private: false, eventId: 'someid'}, function(err, res){
 });
 // upload a signature to a private bucket for security
-reach.upload("{activationId}", data, {private: true}, function(err, res){
+reach.upload(`${activationId}`, data, {private: true}, function(err, res){
 });
 ```
 
@@ -167,9 +167,9 @@ Reach helps you convert file data to images to upload. You can create file objec
 
 _example usage_
 ```
-var image = document.getElementById("myImage");
+var image = document.getElementById('myImage');
 reach.image.fromImage(image, function(err, data){
-    reach.upload("{activationId}", data, function(err, res){});
+    reach.upload(`${activationId}`, data, function(err, res){});
 });
 ```
 
@@ -178,7 +178,7 @@ reach.image.fromImage(image, function(err, data){
  - canvas {Canvas} HTML canvas element
  - options {object}
    - quality {integer} (0-1)
-   - type {string} "image/png", "image/jpeg", "image/gif"
+   - type {string} 'image/png', 'image/jpeg', 'image/gif'
  - done {function} err, data
 
 **fromImage**
@@ -186,7 +186,7 @@ reach.image.fromImage(image, function(err, data){
  - image {Image} HTMl Image element
  - options {object}
    - quality {integer} (0-1)
-   - type {string} "image/png", "image/jpeg", "image/gif"
+   - type {string} 'image/png', 'image/jpeg', 'image/gif'
  - done {function} err, data
 
 **fromFileInput**
@@ -218,7 +218,7 @@ Underlying call to the request object. Must make a new request object for each c
  - done {function} called with err, res prameters @see [done](#done)
 
 ```
-new reach.request("http://localhost", {}, (err, res) => {});
+new reach.request('http://localhost', {}, (err, res) => {});
 ```
 
 ---
@@ -236,19 +236,19 @@ All requests accept an options object. The properties of this object are
 
 If you are only setting the data property you may omit it. The following are equivelant.
 ```
-{id:"1", name:"Michael", random:"value", boolean: true}
-{data: {id:"1", name:"Michael", random:"value", boolean: true} }
+{id:'1', name:'Michael', random:'value', boolean: true}
+{data: {id:'1', name:'Michael', random:'value', boolean: true} }
 ```
 
 As long as your payload does not need to set one of the reserved properties you may omit the data property. For example the following are equivelant.
 ```
-{id:"1", name:"Michael", random:"value", boolean: true, qs: {test:true}}
-{data: {id:"1", name:"Michael", random:"value", boolean: true}, qs: {test:true} }
+{id:'1', name:'Michael', random:'value', boolean: true, qs: {test:true}}
+{data: {id:'1', name:'Michael', random:'value', boolean: true}, qs: {test:true} }
 ```
 
-However, if you payload needs to specify a reserved property you need to place it inside the data object. In the following case test:true will be set as query string parameters while "ok":"ok" will be in the request body.
+However, if you payload needs to specify a reserved property you need to place it inside the data object. In the following case test:true will be set as query string parameters while 'ok':'ok' will be in the request body.
 ```
-{data: {id:"1", name:"Michael", random:"value", boolean: true, qs: {"ok":"ok"}}, qs: {test:true} }
+{data: {id:'1', name:'Michael', random:'value', boolean: true, qs: {'ok':'ok'}}, qs: {test:true} }
 ```
 
 ### Done
@@ -273,15 +273,15 @@ Inspecting the response object will help you debug your requests. You should alw
 Point to the staging server for testing. Defaults to production
 
 ```
-var reach = require("reach");
-reach.key = ""; // set your api key
-reach.setUrl("http://domainorip.com/api/");
+var reach = require('reach');
+reach.key = ''; // set your api key
+reach.setUrl('http://domainorip.com/api/');
 ```
 
 Get a guest by email
 
 ```
-reach.get("guests", {where : {email:"test@heliosinteractive.com"} }, function (err, res) {
+reach.get('guests', {where : {email:'test@heliosinteractive.com'} }, function (err, res) {
   console.log(err, res.body[0] && res.body[0].email);
 });
 ```
@@ -289,7 +289,7 @@ reach.get("guests", {where : {email:"test@heliosinteractive.com"} }, function (e
 Update a guest by email
 
 ```
-reach.put("guests", {email:"test@heliosinteractive.com", "firstName":"Michael"}, function (err, res) {
+reach.put('guests', {email:'test@heliosinteractive.com', 'firstName':'Michael'}, function (err, res) {
   console.log(err, res.body[0] && res.body[0].email);
 });
 ```
@@ -298,7 +298,7 @@ Update a guest by id
 
 ```
 // get guest.id from reach
-reach.put("guests/"+guest.id, {"firstName":"Reach"}, function (err, res) {
+reach.put(`guests/${guest.id}`, {'firstName':'Reach'}, function (err, res) {
   console.log(err, res);
 });
 ```
@@ -306,7 +306,7 @@ reach.put("guests/"+guest.id, {"firstName":"Reach"}, function (err, res) {
 Create an experience
 
 ```
-reach.post("experiences", {"type":"reach_test", "activationId":"123", "eventId":"456"}, function (err, res) {
+reach.post('experiences', {'type':'reach_test', 'activationId':'123', 'eventId':'456'}, function (err, res) {
   console.log(err, res);
 });
 ```
@@ -315,47 +315,47 @@ Upload a photo - 4 ways to handle this with the client
 
 ```
 // from a canvas element (or Canvas object) https://developer.mozilla.org/en-US/docs/Web/API/Canvas_API
-var canvas = document.getElementById("canvas-element-id");
+var canvas = document.getElementById('canvas-element-id');
 reach.image.fromCanvas(canvas, function(err, data){
 
-  reach.upload("{activationId}", data, function(err, res){
+  reach.upload(`${activationId}`, data, function(err, res){
     console.log(err, res.body.result.files);
   });
 });
 
 // from an img tag (or Image object) https://developer.mozilla.org/en-US/docs/Web/API/HTMLImageElement/Image
-var image = document.getElementById("myImage");
+var image = document.getElementById('myImage');
 reach.image.fromImage(image, function(err, data){
 
-  reach.upload("{activationId}", data, function(err, res){
+  reach.upload(`${activationId}`, data, function(err, res){
     console.log(err, res.body.result.files);
   });
 });
 
 // from a local file (Node only)
-reach.image.fromLocalPath(require("path").join(__dirname, "reach.png"), function(err, data){
+reach.image.fromLocalPath(require('path').join(__dirname, 'reach.png'), function(err, data){
 
-  reach.upload("{activationId}", data, function(err, res){
+  reach.upload(`${activationId}`, data, function(err, res){
     console.log(err, res.body.result.files);
   });
 });
 
 
 // From a File object https://developer.mozilla.org/en-US/docs/Web/API/File
-var file = new File([new Blob([""], {type : "image/png"})], "cat.png");
+var file = new File([new Blob([''], {type : 'image/png'})], 'cat.png');
 reach.image.fromFileInput(file, function (err, data) {
 
-  reach.upload("{activationId}", data, function (err, res) {
+  reach.upload(`${activationId}`, data, function (err, res) {
     console.log(err, res.body.result.files);
   });
 });
 
 
 // Or a file input https://developer.mozilla.org/en-US/docs/Web/API/File
-var file = document.getElementById("my-file-input");
+var file = document.getElementById('my-file-input');
 reach.image.fromFileInput(file, function (err, data) {
 
-  reach.upload("{activationId}", data, function (err, res) {
+  reach.upload(`${activationId}`, data, function (err, res) {
     console.log(err, res.body.result.files);
   });
 });
@@ -365,11 +365,11 @@ Manually adding a photo - none of the above methods work for your situation
 
 ```
 var data =  {
-  name: "myimage.gif",
-  type: "image/gif",
-  data: [new Blob([""], {type : "image/gif"})] // any binary array, Buffer, Blob
+  name: 'myimage.gif',
+  type: 'image/gif',
+  data: [new Blob([''], {type : 'image/gif'})] // any binary array, Buffer, Blob
 }
-reach.upload("{activationId}", data, function (err, res) {
+reach.upload(`${activationId}`, data, function (err, res) {
   console.log(err, res.body.result.files);
 });
 ```
@@ -377,8 +377,8 @@ reach.upload("{activationId}", data, function (err, res) {
 Set image type and/or quality. Quality is a value between 0 and 1 and can be set in `fromCanvas` or `fromImage`
 
 ```
-var canvas = document.getElementById("myCanvas");
-reach.image.fromCanvas(canvas, {type:"image/jpeg",quality:0.1},function(err, data){
+var canvas = document.getElementById('myCanvas');
+reach.image.fromCanvas(canvas, {type:'image/jpeg',quality:0.1},function(err, data){
   // upload image
 });
 ```
@@ -388,20 +388,20 @@ reach.image.fromCanvas(canvas, {type:"image/jpeg",quality:0.1},function(err, dat
 Attach a file to an experience
 
 ```
-var canvas = document.getElementById("canvas-element-id"); // first upload from canvas
+var canvas = document.getElementById('canvas-element-id'); // first upload from canvas
 reach.image.fromCanvas(canvas, function(err, data){
 
-  reach.upload("{activationId}", data, function(err, res){
+  reach.upload(`${activationId}`, data, function(err, res){
 
     var exp = {
-      "type":"reach_test",
-      "activationId":"123",
-      "eventId":"456",
-      "photos" : [{
-        "id" : res.body.result.files.file[0].id
+      'type':'reach_test',
+      'activationId':'123',
+      'eventId':'456',
+      'photos' : [{
+        'id' : res.body.result.files.file[0].id
       }]
     };
-    reach.post("experiences", exp, function (err, res) {
+    reach.post('experiences', exp, function (err, res) {
       console.log(err, res);
     });
   });
