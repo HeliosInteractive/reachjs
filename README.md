@@ -47,7 +47,7 @@ define(['reach'], function (reach) {
 
 Module
 ```
-import { reach } from 'reachjs';
+import reach from '@helios-interactive/reachjs';
 
 reach.setUrl('');
 reach.key = '';
@@ -250,6 +250,47 @@ However, if you payload needs to specify a reserved property you need to place i
 ```
 {data: {id:'1', name:'Michael', random:'value', boolean: true, qs: {'ok':'ok'}}, qs: {test:true} }
 ```
+
+#### Query Options
+
+**include**
+Use the include option to include related content.
+```
+reach.get('experiences', {
+   include: 'files',
+   ...
+}
+```
+
+**order**
+Add the order option to have the content returned with a specific sort order.
+```
+reach.get('experiences', {
+   order: 'created desc'
+   ...
+}
+```
+
+**limit**
+Limit the number of results returned. By default this is set to 50.
+```
+reach.get('experiences', {
+   limit: 100
+   ...
+}
+```
+
+**where**
+Provide a where clause to further filter down the result set.
+```
+reach.get('experiences', {
+  where: {
+    activationId: "120398-jsao0j-1n093-1n23098",
+  },
+  ...
+}
+```
+
 
 ### Done
 
