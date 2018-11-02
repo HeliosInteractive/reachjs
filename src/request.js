@@ -193,7 +193,7 @@ const Request = (() => {
     } else if (opts.data) {
       req.write(JSON.stringify(opts.data));
     }
-    req.end();
+    if (!form) req.end();
   };
 
   if (typeof XMLHttpRequest !== 'undefined') { // browser
