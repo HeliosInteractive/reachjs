@@ -11,9 +11,6 @@ try{
   require('./config.js')(reach);
 }
 
-reach.setUrl("http://reachstaging.herokuapp.com/api/");
-reach.key = "helios_test";
-
 describe('Reach PUT', function() {
 
   it("Should update a guest", function(done){
