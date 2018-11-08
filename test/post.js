@@ -12,8 +12,6 @@ try{
 }
 
 var activation = "1e637007-f4bc-4ad2-bc0c-386550df6662";
-reach.setUrl("http://reachstaging.herokuapp.com/api/");
-reach.key = "helios_test";
 
 describe('Reach POST', function() {
 
